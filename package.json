@@ -1,0 +1,37 @@
+{
+  "name": "awesome-editor",
+  "version": "0.0.1",
+  "description": "cross platform editor",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --config ./build/webpack.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/objectIsNotDefined/awesome-editor.git"
+  },
+  "keywords": [
+    "editor",
+    "cross-platform"
+  ],
+  "author": "jan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/objectIsNotDefined/awesome-editor/issues"
+  },
+  "homepage": "https://github.com/objectIsNotDefined/awesome-editor#readme",
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.4",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
+    "less": "^4.1.1",
+    "less-loader": "^9.0.0",
+    "postcss": "^8.3.0",
+    "postcss-loader": "^5.3.0",
+    "postcss-preset-env": "^6.7.0",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  }
+}
