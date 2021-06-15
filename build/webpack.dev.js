@@ -6,7 +6,7 @@ module.exports = {
     path: path.resolve(__dirname, '../dist'),
     filename: 'awesome-editor.js',
     library: {
-      name: 'awesomeEditor',
+      name: 'AwesomeEditor',
       type: 'umd',
       export: 'default'
     }

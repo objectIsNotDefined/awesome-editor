@@ -1,4 +1,4 @@
-import './styles/index.less'
+import './assets/styles/index.less'
 
 import AwesomeEditor from './editor'
 

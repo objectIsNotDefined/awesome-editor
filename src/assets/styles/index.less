@@ -1,0 +1,35 @@
+.awesome-editor {
+  font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,"\5FAE\8F6F\96C5\9ED1",Arial,sans-serif;
+  .node-list {
+    .node-item {
+      position: relative;
+      .input-warp {
+        line-height: 26px;
+        outline: none;
+        padding: 2px 0 2px 28px;
+        font-size: 14px;
+        color: #555659;
+      }
+      .bullet-wrapper {
+        width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        position: absolute;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        left: 3px;
+        top: 6px;
+        &::after {
+          content: '';
+          display: block;
+          width: 6px;
+          height: 6px;
+          border-radius: 3px;
+          background-color: #66666d;
+        }
+      }
+    }
+  }
+}

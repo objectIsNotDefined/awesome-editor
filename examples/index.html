@@ -16,24 +16,30 @@
       display: flex;
       align-items: stretch;
       justify-content: center;
+      padding: 60px;
     }
-    .editor-warp {
+    #editor-box {
       width: 700px;
-      border: 1px solid #dedede
+      border: 1px solid #dedede;
+      overflow: auto;
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <div class="editor-warp">
+    <div id="editor-box">
 
     </div>
   </div>
   <script src="./../dist/awesome-editor.js"></script>
   <script>
-    new awesomeEditor({
-      el: '#app'
+    let Editor = new AwesomeEditor({
+      el: '#editor-box',
+      onChange: (content) => {
+        console.log(content)
+      }
     })
+    console.log(Editor)
   </script>
 </body>
 </html>
