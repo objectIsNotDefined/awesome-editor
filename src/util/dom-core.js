@@ -78,10 +78,10 @@ class DomElement {
   html(val) {
     const node = this.nodeList[0]
     if (val) {
-      node.innerHtml = val
+      node.innerHTML = val
       return this
     } else {
-      return node.innerHtml
+      return node.innerHTML
     }
   }
 

@@ -1,10 +1,11 @@
 import $ from './../util/dom-core'
 
 const VNodeFlags = {
-  TEXT: 1, // 纯文本
-  SPAN: 1 << 1, // 带样式带文本
-  LINK: 1 << 2 // 超链接
+  SPAN: 1, // 带样式带文本
+  LINK: 1 << 1 // 超链接
 }
+
+const SPAN = 'SPAN', LINK = 'A'
 
 // 行内节点
 class VNode {
@@ -18,7 +19,7 @@ class VNode {
   constructor (option) {
     this.flag = option.flag || VNodeFlags.TEXT
     this.text = option.text || ''
-    this.attr = option.attr || {}
+    this.attr = {...option.attr}
   }
 
   // 节点切片，参考String.prototype.slice
@@ -49,9 +50,6 @@ class VNode {
 
   html() {
     let _html = ''
-    if (this.flag & VNodeFlags.TEXT) {
-      _html = this.text
-    }
     if (this.flag & VNodeFlags.SPAN) {
       let styleStr = ``
       if (this.attr.bold) {
@@ -81,16 +79,11 @@ class VNode {
       attr: {}
     }
 
-    // 文本节点
-    if (domNode.nodeType === 3) {
-      option.flag = VNodeFlags.TEXT
-    }
-
     // 字体样式节点
     if (domNode.nodeType === 1 && domNode.nodeName === 'SPAN') {
       option.flag = VNodeFlags.SPAN
       domNode.style.fontWeight === 'bold' && (option.attr.bold = 1)
-      domNode.style.textDecoration === 'line-through' && (option.attr.delete = 1)
+      domNode.style.textDecoration === 'line-through' && (option.attr.strikeThrough = 1)
       domNode.style.color && (option.attr.color = domNode.style.color)
     }
 

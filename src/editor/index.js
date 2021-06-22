@@ -3,18 +3,12 @@ import NodeList from './../nodeList'
 
 export default class AwesomeEditor {
 
-  // 当前编辑器dom
-  $el = null
+  $el = null  // 编辑器挂载dom
 
-  // 节点列表
-  $nodeList = null
-
-  // change事件回调
-  _onChange = null
+  $nodeList = null // 节点列表
 
   constructor ({el, onChange, uploadImg}) {
     this.$el = $(el)
-    this._onChange = onChange
     this._init()
   }
 
@@ -36,12 +30,8 @@ export default class AwesomeEditor {
   }
 
   // 内容初始化
-  setContent(list = []) {
-    this.$nodeList.initNodeListContent()
-  }
-
-  change() {
-    this._onChange('123')
+  setValue(data = []) {
+    this.$nodeList.initNodeListContent(data)
   }
 
 }

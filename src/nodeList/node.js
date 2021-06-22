@@ -16,7 +16,11 @@ class Node {
   // 节点类型
   $type = 1
 
+  // 元素类型
   $el = null
+
+  // vnodes 为当前节点存储的子节点，目前主要应用于 type === 2 的容器节点
+  $vnodes = []
 
   // 初始数据
   
@@ -37,7 +41,7 @@ class Node {
   _initDom() {
     let node = $(`<div class="node-item" data-key="${this.$key}" data-type="${this.$type}">
       <div class="bullet-wrapper"></div>
-      <div class="input-warp" contenteditable="true"><span style="font-weight: bold;">1111</span>2222<span style="font-weight: bold;">3333</span>4444</div>
+      <div class="input-warp" contenteditable="true"><span><br/></span></div>
     </div>`)
     this.$el = node
   }
@@ -56,6 +60,10 @@ class Node {
 
   focus() {
     this.$el.find('.input-warp').focus()
+  }
+
+  refreashContent(html) {
+    this.$el.find('.input-warp').html(html)
   }
 
   insertAfter($node) {

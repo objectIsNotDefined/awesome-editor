@@ -17,7 +17,6 @@ class NodeList {
 
   _init() {
     this._initNodeListWarp()
-    // this._initNodeList()
   }
 
   _initNodeListWarp() {

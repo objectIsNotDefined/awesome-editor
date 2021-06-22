@@ -39,7 +39,18 @@
         console.log(content)
       }
     })
-    console.log(Editor)
+    Editor.setValue([
+      { type: 1, content: '123' },
+      { type: 2, 
+        content: '', 
+        child: [
+          { type: 21, content: '成都', attr: { bold: 1 } },
+          { type: 21, content: '博普云达', attr: { underline: 1 } },
+          { type: 21, content: '科技', attr: { underline: 1, lineThrough: 1 } },
+          { type: 21, content: '有限公司', attr: { color: '#1cedd1' } }
+        ]
+      }
+    ])
   </script>
 </body>
 </html>
