@@ -29,15 +29,5 @@ export function BoldEvent(e, $node) {
   nodeInfo.selection_middle.forEach(_item => {
     _item.update('bold')
   })
-  
-  nodeInfo.selection_left.forEach(vnode => {
-    html += vnode.html()
-  })
-  nodeInfo.selection_middle.forEach(vnode => {
-    html += vnode.html()
-  })
-  nodeInfo.selection_right.forEach(vnode => {
-    html += vnode.html()
-  })
-  $node.refreashContent(html)
+  $node.initByVnodes(nodeInfo)
 }

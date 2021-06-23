@@ -71,6 +71,12 @@ class DomElement {
     return parent.contains(child)
   }
 
+  empty() {
+    this.nodeList.forEach(node => {
+      node.innerHTML = ''
+    })
+  }
+
   getSizeData() {
     return this.nodeList[0].getBoundingClientRect()
   }

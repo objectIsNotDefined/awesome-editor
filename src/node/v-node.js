@@ -1,4 +1,5 @@
 import $ from './../util/dom-core'
+import { deepEqual } from './../util/util'
 
 const VNodeFlags = {
   SPAN: 'SPAN', // 带样式带文本
@@ -15,19 +16,24 @@ class VNode {
   $attr = {}    // bold delete color
 
   constructor (option) {
-    this.flag = option.flag || VNodeFlags.SPAN
-    this.text = option.text || ''
+    this.$flag = option.flag || VNodeFlags.SPAN
+    this.$text = option.text || ''
     this.$attr = { ...option.attr }
   }
 
   // 节点切片，参考String.prototype.slice
   slice (start, end) {
-    let _text = this.text.slice(start, end)
+    let _text = this.$text.slice(start, end)
     return new VNode({
       text: _text,
-      flag: this.flag,
+      flag: this.$flag,
       attr: this.$attr
     })
+  }
+
+  // 更新内容
+  updateContent (val) {
+    this.$text = val
   }
 
   // 更新节点
@@ -49,16 +55,16 @@ class VNode {
 
   compile () {
     let element = document.createElement(this.$flag)
-    element.innerHTML = this.$text
+    element.innerHTML = this.$text || '<br/>'
     if(this.$flag === VNodeFlags.SPAN) {
       // 字体加粗
-      option.attr.bold && (element.style.fontWeight = 'bold')
+      this.$attr.bold && (element.style.fontWeight = 'bold')
       // 字体颜色
-      option.attr.color && (element.style.color = option.attr.color)
+      this.$attr.color && (element.style.color = this.$attr.color)
       // 处理下划线/中划线
       let textDecoration = ''
-      option.attr.underline && (textDecoration += 'underline')
-      option.attr.lineThrough && (textDecoration += ' line-through')
+      this.$attr.underline && (textDecoration += 'underline')
+      this.$attr.lineThrough && (textDecoration += ' line-through')
       if (textDecoration) {
         element.style.textDecoration = textDecoration
       }
@@ -69,13 +75,25 @@ class VNode {
     return element
   }
 
+  // 判断两个节点是否相似(除了文本内容不一样，其他都一样)
+  isSimilarTo (vnode) {
+    let result = true
+    if (this.$flag !== vnode.$flag) {
+      result = false
+    }
+    if (!deepEqual(this.$attr, vnode.$attr)) {
+      result = false
+    }
+    return result
+  }
+
+  // 根据dom创建一个vnode
   static create = (domNode) => {
     let option = {
       flag: undefined,
       text: domNode.textContent,
       attr: {}
     }
-
     // 文本节点
     if (domNode.nodeType === 1 && domNode.nodeName === 'SPAN') {
       option.flag = VNodeFlags.SPAN
@@ -87,13 +105,11 @@ class VNode {
       // 字体颜色
       domNode.style.color && (option.attr.color = domNode.style.color)
     }
-
     // 超链接节点
     if (domNode.nodeType === 1 && domNode.nodeName === 'A') {
       option.flag = VNodeFlags.LINK
       option.attr.url = domNode.getAttribute('href') || ''
     }
-
     return new VNode(option)
   }
 

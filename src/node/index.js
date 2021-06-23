@@ -1,5 +1,6 @@
 import $ from './../util/dom-core'
 import { getRandomStr } from './../util/util'
+import { generateChildNodes } from './selection-helper'
 import { 
   EnterEvent,
   BoldEvent
@@ -13,8 +14,6 @@ class Node {
   $type = null    // 节点类型 1-标题 2-容器
 
   $el = null      // 节点元素
-
-  $vnodes = []    // 节点内部vnodes(用于描述节点信息)
 
   constructor (options, $editor) {
     this.$editor = $editor
@@ -51,7 +50,7 @@ class Node {
           if (textDecoration) {
             stylesArr.push(`text-decoration: ${textDecoration}`)
           }
-          cur += `<span style="${stylesArr.join(';')}">${item.content}</span>`    
+          cur += `<span style="${stylesArr.join(';')}">${item.content}</span>`
         }
         return cur
       }, '')
@@ -74,6 +73,11 @@ class Node {
         BoldEvent(e, this)
       }
     })
+  }
+
+  // 根据vnode刷新节点内容
+  initByVnodes (nodeInfo) {
+    generateChildNodes(nodeInfo, this.$el)
   }
 
   // 节点聚焦
