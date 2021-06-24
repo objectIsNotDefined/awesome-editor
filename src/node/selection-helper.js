@@ -55,25 +55,8 @@ export function selectionFormat (target) {
   return { selection_left, selection_middle, selection_right }
 }
 
-// 处理空节点/合并相邻节点
-const formatNodes = (list) => {
-  let _list = []
-  for (let i = 0, len = list.length; i < len; i++) {
-    let node = list[i]
-    let prevNode = _list[_list.length - 1]
-    if (node.$text.length === 0) continue
-    // 如果已经有值
-    if (prevNode && node.isSimilarTo(prevNode)) {
-      prevNode.updateContent(prevNode.$text + node.$text)
-    } else {
-      _list.push(node)
-    }
-  }
-  return _list
-}
-
 // 设置选区
-const refreashSelection = (param) => {
+export function refreashSelection (param) {
   const range = new Range()
   const startNode = param.startNode.childNodes[0]
   const endNode = param.endNode.childNodes[param.endNode.childNodes.length - 1]
@@ -88,9 +71,9 @@ const refreashSelection = (param) => {
 export function generateChildNodes(nodeInfo, $el) {
   const $input = $el.find('.input-warp')
   $input.empty()
-  let nodes_l = formatNodes(nodeInfo.selection_left)
-  let nodes_m = formatNodes(nodeInfo.selection_middle)
-  let nodes_r = formatNodes(nodeInfo.selection_right)
+  let nodes_l = VNode.formatVNodes(nodeInfo.selection_left)
+  let nodes_m = VNode.formatVNodes(nodeInfo.selection_middle)
+  let nodes_r = VNode.formatVNodes(nodeInfo.selection_right)
   let selectionObj = {
     startNode: null,
     endNode: null

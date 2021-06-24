@@ -2,7 +2,7 @@ import VNode from './v-node'
 import { selectionFormat } from './selection-helper'
 
 // 回车换行
-export function EnterEvent(e, $node) {
+export function EnterEvent (e, $node) {
   e.preventDefault()
   const childNode = [...e.target.childNodes]
   const selection = window.getSelection? window.getSelection() : document.getSelection()
@@ -23,11 +23,19 @@ export function EnterEvent(e, $node) {
 }
 
 // ctrl/cmd + b 加粗
-export function BoldEvent(e, $node) {
+export function BoldEvent (e, $node) {
   e.preventDefault()
+  if ($node.$type !== 2) return
   let nodeInfo = selectionFormat(e.target)
-  nodeInfo.selection_middle.forEach(_item => {
-    _item.update('bold')
+  let nextStatus = nodeInfo.selection_middle.every(vnode => vnode.$attr.bold)? 0 : 1
+  nodeInfo.selection_middle.forEach(vnode => {
+    vnode.update('bold', nextStatus)
   })
-  $node.initByVnodes(nodeInfo)
+  $node.refreashByVnodes(nodeInfo)
+}
+
+// 删除事件
+export function DeleteEvent (e, $node) {
+  // e.preventDefault()
+  console.log($node.$el.find('.input-warp').html())
 }

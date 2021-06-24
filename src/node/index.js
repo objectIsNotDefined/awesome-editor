@@ -1,9 +1,11 @@
 import $ from './../util/dom-core'
 import { getRandomStr } from './../util/util'
-import { generateChildNodes } from './selection-helper'
+import { refreashNodeContent } from './node-helper'
+import VNode from './v-node'
 import { 
   EnterEvent,
-  BoldEvent
+  BoldEvent,
+  DeleteEvent
 } from './keyboard-events'
 class Node {
 
@@ -30,37 +32,21 @@ class Node {
 
   // 初始化节点容器
   _initDom (options) {
-    let contentHtml = ''
-    if (options.type === 1) {
-      contentHtml = `<span>${options.content || '<br/>'}</span>`
-    }
-    if (options.type === 2) {
-      contentHtml = options.child.reduce((cur, item) => {
-        // 如果是文本节点
-        if (item.type === 21 && item.content) {
-          let stylesArr = []
-          // 字体加粗
-          item.attr.bold && (stylesArr.push('font-weight: bold'))
-          // 字体颜色
-          item.attr.color && (stylesArr.push(`color: ${item.attr.color}`))
-          // 处理下划线/中划线
-          let textDecoration = ''
-          item.attr.underline && (textDecoration += 'underline')
-          item.attr.lineThrough && (textDecoration += ' line-through')
-          if (textDecoration) {
-            stylesArr.push(`text-decoration: ${textDecoration}`)
-          }
-          cur += `<span style="${stylesArr.join(';')}">${item.content}</span>`
-        }
-        return cur
-      }, '')
-      contentHtml = contentHtml || `<span><br/></span>`
-    }
-    let node = $(`<div class="node-item" data-key="${this.$key}" data-type="${this.$type}">
+    this.$el = $(`<div class="node-item" data-key="${this.$key}">
       <div class="bullet-wrapper"></div>
-      <div class="input-warp" contenteditable="true">${contentHtml}</div>
+      <div class="input-warp" contenteditable="true"></div>
     </div>`)
-    this.$el = node
+    // 初始化内容
+    if (this.$type === 1) {
+      let $text = $(`<span>${options.content}</span>`)
+      this.$el.find('.input-warp').empty().append($text)
+    }
+    if (this.$type === 2) {
+      let vnodes = options.child.map(item => VNode.create(item))
+      vnodes.forEach(vnode => {
+        this.$el.find('.input-warp').append($(vnode.compile()))
+      })
+    }
   }
 
   // 绑定节点事件
@@ -72,12 +58,15 @@ class Node {
       if (e.keyCode === 66 && (e.ctrlKey || e.metaKey)) {
         BoldEvent(e, this)
       }
+      if (e.keyCode === 8) {
+        DeleteEvent(e, this)
+      }
     })
   }
 
   // 根据vnode刷新节点内容
-  initByVnodes (nodeInfo) {
-    generateChildNodes(nodeInfo, this.$el)
+  refreashByVnodes (nodeInfo) {
+    refreashNodeContent(nodeInfo, this)
   }
 
   // 节点聚焦

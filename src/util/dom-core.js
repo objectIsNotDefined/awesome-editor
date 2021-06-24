@@ -75,6 +75,7 @@ class DomElement {
     this.nodeList.forEach(node => {
       node.innerHTML = ''
     })
+    return this
   }
 
   getSizeData() {

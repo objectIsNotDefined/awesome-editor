@@ -14,16 +14,25 @@ Cross platform editor
     }
   },
   {
-    "type": 2,            // 内容节点，节点本身为容器，没有content为空
+    "type": 2,            // 内容节点，节点本身为容器，本身没有content
     "content": "",
     "child": [
       {
         "type": 21,
         "content": "文本内容",
-        "attribute": {
-          "bold": 1,      // 是否加粗
-          "delete": 1,    // 是否有删除线
-          "color": "#dedede" // 字体颜色
+        "attr": {
+          "bold": 1,         // 加粗
+          "underline": 1,    // 下划线
+          "lineThrough": 1,  // 删除线
+          "italic": 1,       // 斜体
+          "color": "red"     // 字体颜色(red, yellow, green)
+        }
+      },
+      {
+        "type": 22,
+        "content": "文本内容",
+        "attr": {
+          "url": "https://www.baidu.com"
         }
       }
     ]

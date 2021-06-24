@@ -2,7 +2,7 @@ import $ from './../util/dom-core'
 import { deepEqual } from './../util/util'
 
 const VNodeFlags = {
-  SPAN: 'SPAN', // 带样式带文本
+  TEXT: 'SPAN', // 带样式带文本
   LINK: 'A' // 超链接
 }
 
@@ -16,7 +16,7 @@ class VNode {
   $attr = {}    // bold delete color
 
   constructor (option) {
-    this.$flag = option.flag || VNodeFlags.SPAN
+    this.$flag = option.flag || VNodeFlags.TEXT
     this.$text = option.text || ''
     this.$attr = { ...option.attr }
   }
@@ -38,36 +38,22 @@ class VNode {
 
   // 更新节点
   update (cmd, val) {
-    if (cmd === 'bold') {
-      this.$attr.bold = this.$attr.bold? 0 : 1
-    }
-    if (cmd === 'color') {
-      this.$attr.color = val
-      !!!val && (delete this.$attr.color)
-    }
-    if (cmd === 'underline') {
-      this.$attr.underline = this.$attr.underline? 0 : 1
-    }
-    if (cmd === 'lineThrough') {
-      this.$attr.lineThrough = this.$attr.lineThrough? 0 : 1
-    }
+    this.$attr[cmd] = val
   }
 
   compile () {
     let element = document.createElement(this.$flag)
     element.innerHTML = this.$text || '<br/>'
-    if(this.$flag === VNodeFlags.SPAN) {
-      // 字体加粗
-      this.$attr.bold && (element.style.fontWeight = 'bold')
-      // 字体颜色
-      this.$attr.color && (element.style.color = this.$attr.color)
-      // 处理下划线/中划线
-      let textDecoration = ''
-      this.$attr.underline && (textDecoration += 'underline')
-      this.$attr.lineThrough && (textDecoration += ' line-through')
-      if (textDecoration) {
-        element.style.textDecoration = textDecoration
-      }
+    if(this.$flag === VNodeFlags.TEXT) {
+      let classList = []
+      Object.keys(this.$attr).forEach(key => {
+        if (key === 'color') {
+          classList.push(`text-color-${this.$attr[key]}`)
+        } else if (this.$attr[key]) {
+          classList.push(key)
+        }
+      })
+      element.className = classList.join(' ')
     }
     if (this.$flag === VNodeFlags.LINK) {
       element.setAttribute('href', this.$attr.url)
@@ -87,30 +73,77 @@ class VNode {
     return result
   }
 
-  // 根据dom创建一个vnode
-  static create = (domNode) => {
-    let option = {
+  // 根据Element创建vnode
+  static createByElement = (ele) => {
+    const _option = {
       flag: undefined,
-      text: domNode.textContent,
+      text: ele.textContent,
       attr: {}
     }
-    // 文本节点
-    if (domNode.nodeType === 1 && domNode.nodeName === 'SPAN') {
-      option.flag = VNodeFlags.SPAN
-      // 加粗
-      domNode.style.fontWeight === 'bold' && (option.attr.bold = 1)
-      // 中划线
-      domNode.style.textDecoration.includes('line-through') && (option.attr.lineThrough = 1)
-      domNode.style.textDecoration.includes('underline') && (option.attr.underline = 1)
-      // 字体颜色
-      domNode.style.color && (option.attr.color = domNode.style.color)
+    if (ele.nodeType === 1 && ele.nodeName === 'SPAN') {
+      _option.flag = VNodeFlags.TEXT
+      let attrOptions = ['bold', 'underline', 'lineThrough', 'italic']
+      let classList = [...ele.classList]
+      attrOptions.forEach(key => {
+        classList.includes(key) && (_option.attr[key] = 1)
+      })
+      if (classList.includes('text-color-red')) {
+        _option.attr.color = 'red'
+      }
+      if (classList.includes('text-color-green')) {
+        _option.attr.color = 'green'
+      }
+      if (classList.includes('text-color-yellow')) {
+        _option.attr.color = 'yellow'
+      }
     }
     // 超链接节点
-    if (domNode.nodeType === 1 && domNode.nodeName === 'A') {
-      option.flag = VNodeFlags.LINK
-      option.attr.url = domNode.getAttribute('href') || ''
+    if (ele.nodeType === 1 && ele.nodeName === 'A') {
+      _option.flag = VNodeFlags.LINK
+      _option.attr.url = ele.getAttribute('href') || ''
     }
-    return new VNode(option)
+    return new VNode(_option)
+  }
+
+  // 根据编辑器原始数据创建vnode
+  static createByData = (data) => {
+    let typeFlagMap = {
+      [21]: VNodeFlags.TEXT,
+      [22]: VNodeFlags.LINK
+    }
+    const _option = {
+      flag: typeFlagMap[data.type],
+      text: data.content,
+      attr: { ...data.attr }
+    }
+    return new VNode(_option)
+  }
+
+  // 创建vnode
+  static create = (source) => {
+    if (source instanceof Element) {
+      return VNode.createByElement(source)
+    }
+    if (source instanceof Object) {
+      return VNode.createByData(source)
+    }
+  }
+
+  // VNodeList格式化，合并处理相邻的相似节点
+  static formatVNodes = (list) => {
+    let _list = []
+    for (let i = 0, len = list.length; i < len; i++) {
+      let node = list[i]
+      let prevNode = _list[_list.length - 1]
+      if (node.$text.length === 0) continue
+      // 如果已经有值
+      if (prevNode && node.isSimilarTo(prevNode)) {
+        prevNode.updateContent(prevNode.$text + node.$text)
+      } else {
+        _list.push(node)
+      }
+    }
+    return _list
   }
 
 }

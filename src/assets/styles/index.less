@@ -9,6 +9,32 @@
         padding: 2px 0 2px 28px;
         font-size: 14px;
         color: #555659;
+        & > span {
+          &.bold {
+            font-weight: 900;
+          }
+          &.underline {
+            text-decoration: underline;
+          }
+          &.lineThrough {
+            text-decoration: line-through;
+          }
+          &.underline.lineThrough {
+            text-decoration: underline line-through;
+          }
+          &.italic {
+            font-style: italic;
+          }
+          &.text-color-red {
+            color: #F4664A;
+          }
+          &.text-color-green {
+            color: #30BF78;
+          }
+          &.text-color-yellow {
+            color: #FAAD14;
+          }
+        }
       }
       .bullet-wrapper {
         width: 18px;
