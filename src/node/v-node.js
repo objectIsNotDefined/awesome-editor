@@ -15,6 +15,8 @@ class VNode {
   
   $attr = {}    // bold delete color
 
+  $ele = null   // 节点的dom映射
+
   constructor (option) {
     this.$flag = option.flag || VNodeFlags.TEXT
     this.$text = option.text || ''
@@ -58,6 +60,7 @@ class VNode {
     if (this.$flag === VNodeFlags.LINK) {
       element.setAttribute('href', this.$attr.url)
     }
+    this.$ele = element
     return element
   }
 

@@ -6,9 +6,9 @@ export function selectionFormat (target) {
   const selection = window.getSelection? window.getSelection() : document.getSelection()
   const range = selection.getRangeAt(0)
   let startNodeIndex, endNodeIndex
-  let selection_left = [],
-      selection_right = [],
-      selection_middle = []
+  let vnodes_l = [],
+      vnodes_r = [],
+      vnodes_m = []
   // 遍历子节点
   for (let i = 0; i < childNode.length; i++) {
     let node = childNode[i]
@@ -25,79 +25,86 @@ export function selectionFormat (target) {
 
     // 如果还未找到selection开始节点，则该节点未左侧节点
     if (startNodeIndex === undefined) {
-      selection_left.push(_vnode)
+      vnodes_l.push(_vnode)
     }
     // 如果当前节点为开始节点，则切片，找出属于左侧部分
     if (startNodeIndex === i) {
-      selection_left.push(_vnode.slice(0, range.startOffset))
+      vnodes_l.push(_vnode.slice(0, range.startOffset))
     }
     // 如果当前节点为开始节点，并且和结束节点一样
     if (startNodeIndex === i && endNodeIndex === i) {
-      selection_middle.push(_vnode.slice(range.startOffset, range.endOffset))
+      vnodes_m.push(_vnode.slice(range.startOffset, range.endOffset))
     }
     if (startNodeIndex === i && endNodeIndex === undefined) {
-      selection_middle.push(_vnode.slice(range.startOffset))
+      vnodes_m.push(_vnode.slice(range.startOffset))
     }
     if (startNodeIndex < i && endNodeIndex === undefined) {
-      selection_middle.push(_vnode)
+      vnodes_m.push(_vnode)
     }
     if (startNodeIndex < i && endNodeIndex === i) {
-      selection_middle.push(_vnode.slice(0, range.endOffset))
+      vnodes_m.push(_vnode.slice(0, range.endOffset))
     }
     // 如果是结束节点
     if (endNodeIndex === i) {
-      selection_right.push(_vnode.slice(range.endOffset))
+      vnodes_r.push(_vnode.slice(range.endOffset))
     }
     if (endNodeIndex !== undefined && i > endNodeIndex) {
-      selection_right.push(_vnode)
+      vnodes_r.push(_vnode)
     }
   }
-  return { selection_left, selection_middle, selection_right }
+  return {
+    vnodes_l: VNode.formatVNodes(vnodes_l),
+    vnodes_m: VNode.formatVNodes(vnodes_m),
+    vnodes_r: VNode.formatVNodes(vnodes_r)
+  }
 }
 
 // 设置选区
-export function refreashSelection (param) {
+export function refreashSelection ({vnodes_l, vnodes_m, vnodes_r}) {
+  let startContainer = null,
+      startOffset = 0,
+      endContainer = null,
+      endOffset = 0
+  // 光标没有选中任何区域
+  if (vnodes_m.length === 0) {
+    console.log({vnodes_l, vnodes_m, vnodes_r})
+    // 光标在行首
+    if (vnodes_l.length === 0 && vnodes_r.length) {
+      startContainer = vnodes_r[0].$ele.childNodes[0]
+      endContainer = startContainer
+      startOffset = 0
+      endOffset = 0
+    }
+    // 光标在行尾
+    if (vnodes_l.length && vnodes_r.length === 0) {
+      let targetEle = vnodes_l.slice(-1)[0].$ele
+      startContainer = [...targetEle.childNodes].slice(-1)[0]
+      endContainer = startContainer
+      startOffset = startContainer.textContent.length
+      endOffset = startOffset
+    }
+    // 光标在中间,暂时将光标放在右侧行首
+    if (vnodes_l.length && vnodes_r.length) {
+      startContainer = vnodes_r[0].$ele.childNodes[0]
+      endContainer = startContainer
+      startOffset = 0
+      endOffset = 0
+    }
+  } else {
+    startContainer = vnodes_m[0].$ele.childNodes[0]
+    startOffset = 0
+    let lastVNodeEle = vnodes_m.slice(-1)[0].$ele
+    endContainer = [...lastVNodeEle.childNodes].slice(-1)[0]
+    endOffset = endContainer.textContent.length
+  }
+
+  // 如果没有找到锚点，则暂时不处理
+  if (!startContainer || !endContainer) return
+
   const range = new Range()
-  const startNode = param.startNode.childNodes[0]
-  const endNode = param.endNode.childNodes[param.endNode.childNodes.length - 1]
-  range.setStart(startNode, 0)
-  range.setEnd(endNode, endNode.textContent.length)
+  range.setStart(startContainer, startOffset)
+  range.setEnd(endContainer, endOffset)
   const selection = window.getSelection ? window.getSelection() : document.getSelection()
   selection.removeAllRanges()
   selection.addRange(range)
 }
-
-// 根据vnodes刷新该行dom
-export function generateChildNodes(nodeInfo, $el) {
-  const $input = $el.find('.input-warp')
-  $input.empty()
-  let nodes_l = VNode.formatVNodes(nodeInfo.selection_left)
-  let nodes_m = VNode.formatVNodes(nodeInfo.selection_middle)
-  let nodes_r = VNode.formatVNodes(nodeInfo.selection_right)
-  let selectionObj = {
-    startNode: null,
-    endNode: null
-  }
-  nodes_l.forEach(node => {
-    $input.append($(node.compile()))
-  })
-  nodes_m.forEach((node, index) => {
-    let ele = node.compile()
-    $input.append($(ele))
-    if (index === 0) {
-      selectionObj.startNode = ele
-    }
-    if (index + 1 === nodes_m.length) {
-      selectionObj.endNode = ele
-    }
-  })
-  nodes_r.forEach(node => {
-    $input.append($(node.compile()))
-  })
-  refreashSelection(selectionObj)
-}
-
-
-
-
-

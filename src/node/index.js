@@ -5,7 +5,10 @@ import VNode from './v-node'
 import { 
   EnterEvent,
   BoldEvent,
-  DeleteEvent
+  DeleteEvent,
+  ItalicEvent,
+  UnderlineEvent,
+  LineThroughEvent
 } from './keyboard-events'
 class Node {
 
@@ -38,11 +41,17 @@ class Node {
     </div>`)
     // 初始化内容
     if (this.$type === 1) {
-      let $text = $(`<span>${options.content}</span>`)
+      let $text = $(`<span>${options.content || '<br/>'}</span>`)
       this.$el.find('.input-warp').empty().append($text)
     }
     if (this.$type === 2) {
-      let vnodes = options.child.map(item => VNode.create(item))
+      let vnodes = []
+      if (options.vnodes) {
+        // 如果是空，则初始化一个vnode
+        vnodes = options.vnodes.length? options.vnodes : [new VNode({type: 21, content: '', attr: {}})]
+      } else {
+        vnodes = options.child.map(item => VNode.create(item))
+      }
       vnodes.forEach(vnode => {
         this.$el.find('.input-warp').append($(vnode.compile()))
       })
@@ -52,12 +61,29 @@ class Node {
   // 绑定节点事件
   _initEvent () {
     this.$el.on('keydown', '.input-warp', (e) => {
+      // 回车换行 enter
       if (e.keyCode === 13) {
         EnterEvent(e, this)
       }
+      // 加粗 cmd/ctrl + B
       if (e.keyCode === 66 && (e.ctrlKey || e.metaKey)) {
         BoldEvent(e, this)
       }
+      // 斜体 cmd/ctrl + I
+      if (e.keyCode === 73 && (e.ctrlKey || e.metaKey)) {
+        ItalicEvent(e, this)
+      }
+      // 下划线 cmd/ctrl + U
+      if (e.keyCode === 85 && (e.ctrlKey || e.metaKey)) {
+        UnderlineEvent(e, this)
+      }
+      // 中划线 cmd/ctrl + H
+      if (e.keyCode === 72 && (e.ctrlKey || e.metaKey)) {
+        LineThroughEvent(e, this)
+      }
+    })
+    // 删除事件，keyup触发，保持容器结构
+    this.$el.on('keyup', '.input-warp', (e) => {
       if (e.keyCode === 8) {
         DeleteEvent(e, this)
       }
