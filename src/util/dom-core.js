@@ -122,8 +122,38 @@ class DomElement {
     })
   }
 
-  focus() {
+  // 聚焦dom type -1 行尾 1 行首
+  focus(type = -1) {
     if (this.nodeList.length === 0) return
+    let inputWarpEle = this.nodeList[0]
+    let rangeConfig = {
+      node: null,
+      offset: 0
+    }
+    if (type == 1) {
+      let firstSpan = [...inputWarpEle.childNodes][0]
+      let firstNode = [...firstSpan.childNodes][0]
+      rangeConfig = {
+        node: firstNode,
+        offset: 0
+      }
+    }
+    if (type == -1) {
+      let lastSpan = [...inputWarpEle.childNodes].slice(-1)[0]
+      let lastNode = [...lastSpan.childNodes].slice(-1)[0]
+      rangeConfig = {
+        node: lastNode,
+        offset: lastNode.textContent.length
+      }
+    }
+    let lastSpan = [...inputWarpEle.childNodes].slice(-1)[0]
+    let lastNode = [...lastSpan.childNodes].slice(-1)[0]
+    const range = new Range()
+    range.setStart(rangeConfig.node, rangeConfig.offset)
+    range.setEnd(rangeConfig.node, rangeConfig.offset)
+    const selection = window.getSelection ? window.getSelection() : document.getSelection()
+    selection.removeAllRanges()
+    selection.addRange(range)
     this.nodeList[0].focus()
   }
 

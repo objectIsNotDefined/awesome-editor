@@ -20,11 +20,13 @@ class Node {
 
   $el = null      // 节点元素
 
+  $attr = {}
+
   constructor (options, $editor) {
     this.$editor = $editor
     this.$key = options.id || getRandomStr()
     this.$type = options.type || 1
-    this.__initialVal = options.content
+    this.$attr = options.attr
     this._init(options)
   }
 
@@ -35,7 +37,11 @@ class Node {
 
   // 初始化节点容器
   _initDom (options) {
-    this.$el = $(`<div class="node-item" data-key="${this.$key}">
+    let classNames = ''
+    if (this.$type === 1) {
+      classNames = `heading${options?.attr?.level || 1}`
+    }
+    this.$el = $(`<div class="node-item ${classNames}" data-key="${this.$key}">
       <div class="bullet-wrapper"></div>
       <div class="input-warp" contenteditable="true"></div>
     </div>`)
@@ -95,9 +101,14 @@ class Node {
     refreashNodeContent(nodeInfo, this)
   }
 
-  // 节点聚焦
+  // 节点聚焦, 光标移动到最后
   focus() {
     this.$el.find('.input-warp').focus()
+  }
+
+  // 节点移除
+  remove() {
+
   }
 
   // 将节点插入制定位置

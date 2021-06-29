@@ -13,16 +13,24 @@ export function DeleteEvent (e, $node) {
 // 回车换行
 export function EnterEvent (e, $node) {
   e.preventDefault()
-  if ($node.$type !== 2) return
+  if ([1, 2].indexOf($node.$type) == -1) return
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
   $node.refreashByVnodes({vnodes_l: [], vnodes_m: [], vnodes_r: vnodes_l})
   let newLineOptions = {
     type: $node.$type,
     content: '',
-    vnodes: [...vnodes_r]
+    vnodes: []
+  }
+  if ($node.$type === 1) {
+    newLineOptions.content = vnodes_r.length? vnodes_r[0].$text : ''
+    newLineOptions.attr = {...$node.$attr}
+  }
+  if ($node.$type === 2) {
+    newLineOptions.vnodes = [...vnodes_r]
   }
   let newLine = new Node(newLineOptions, $node.$editor)
   newLine.insertAfter($node)
+  newLine.$el.find('.input-warp').focus(1)
 }
 
 // ctrl/cmd + b 加粗

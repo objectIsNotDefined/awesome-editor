@@ -47,6 +47,7 @@
         justify-content: center;
         left: 3px;
         top: 6px;
+        transition: all .3s ease;
         &::after {
           content: '';
           display: block;
@@ -54,6 +55,37 @@
           height: 6px;
           border-radius: 3px;
           background-color: #66666d;
+        }
+        &:hover {
+          background-color: rgb(233, 233, 235);
+          transform: scale(1.1);
+        }
+      }
+      &.heading1 {
+        .input-warp {
+          font-size: 26px;
+          line-height: 39px;
+        }
+        .bullet-wrapper {
+          top: 12px;
+        }
+      }
+      &.heading2 {
+        .input-warp {
+          font-size: 22px;
+          line-height: 32px;
+        }
+        .bullet-wrapper {
+          top: 9px;
+        }
+      }
+      &.heading3 {
+        .input-warp {
+          font-size: 20px;
+          line-height: 30px;
+        }
+        .bullet-wrapper {
+          top: 8px;
         }
       }
     }

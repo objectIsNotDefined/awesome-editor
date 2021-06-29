@@ -26,6 +26,16 @@ class Content {
 
   // 设置编辑器内容
   setValue (data = []) {
+    this.$nodes = []
+    if (data.length === 0) {
+      data = [
+        {
+          type: 2,
+          content: '',
+          child: [ {type: 21, content: '欢迎使用awesome-editor', attr: {}} ]
+        }
+      ]
+    }
     data.forEach(item => {
       let $node = new Node(item, this.$editor)
       $node.insertAfter(false)

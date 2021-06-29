@@ -20,7 +20,6 @@
     }
     #editor-box {
       width: 700px;
-      border: 1px solid #dedede;
       overflow: auto;
     }
   </style>
@@ -40,7 +39,9 @@
       }
     })
     Editor.setValue([
-      { type: 1, content: '' },
+      { type: 1, content: '一级标题', attr: {level: 1} },
+      { type: 1, content: '二级标题', attr: {level: 2} },
+      { type: 1, content: '三级标题', attr: {level: 3} },
       { type: 2, 
         content: '', 
         child: [
