@@ -1,12 +1,39 @@
 import VNode from './v-node'
 import { selectionFormat, refreashSelection } from './selection-helper'
+import { getCursorPosition } from './../util/selection'
 import Node from './index'
 
-// 删除
-export function DeleteEvent (e, $node) {
+// 删除 keyup
+export function DeleteDownEvent (e, $node) {
   let inputInnerHTML = e.target.innerHTML
+  // keydown - 如果当前数据为空，则删除该行
+  if (e.target.innerHTML === '<span><br></span>') {
+    $node.remove()
+    e.preventDefault()
+    return
+  }
+  
+  // 光标在行首, 自动合并至上一行
+  let rangeObj = getCursorPosition()
+  let currentNodeIndex = $node.$editor.$content.$nodes.indexOf($node)
+  if (rangeObj.start === 0 && rangeObj.end === 0 && currentNodeIndex !== 0) {
+    let prevNode = $node.$editor.$content.$nodes[currentNodeIndex - 1]
+    let prevVNode = [...prevNode.$el.find('.input-warp').nodeList[0].childNodes].map(el => VNode.create(el))
+    let nextVNode = [...$node.$el.find('.input-warp').nodeList[0].childNodes].map(el => VNode.create(el))
+    $node.remove()
+    let vnodeConfig = {vnodes_l: prevVNode, vnodes_m: [], vnodes_r: nextVNode}
+    prevNode.refreashByVnodes(vnodeConfig)
+    refreashSelection(vnodeConfig)
+  }
+}
+
+// 删除 keydown
+export function DeleteUpEvent (e, $node) {
+  let inputInnerHTML = e.target.innerHTML
+  // keyup - 删除后格式化dom
   if (inputInnerHTML.length === 0 || inputInnerHTML === '<br>') {
     e.target.innerHTML = '<span><br></span>'
+    return
   }
 }
 
@@ -17,16 +44,9 @@ export function EnterEvent (e, $node) {
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
   $node.refreashByVnodes({vnodes_l: [], vnodes_m: [], vnodes_r: vnodes_l})
   let newLineOptions = {
-    type: $node.$type,
+    type: 2,
     content: '',
-    vnodes: []
-  }
-  if ($node.$type === 1) {
-    newLineOptions.content = vnodes_r.length? vnodes_r[0].$text : ''
-    newLineOptions.attr = {...$node.$attr}
-  }
-  if ($node.$type === 2) {
-    newLineOptions.vnodes = [...vnodes_r]
+    vnodes: [...vnodes_r]
   }
   let newLine = new Node(newLineOptions, $node.$editor)
   newLine.insertAfter($node)

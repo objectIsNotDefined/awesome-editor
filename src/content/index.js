@@ -39,7 +39,6 @@ class Content {
     data.forEach(item => {
       let $node = new Node(item, this.$editor)
       $node.insertAfter(false)
-      $node.focus()
     })
   }
 

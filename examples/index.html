@@ -32,7 +32,7 @@
   </div>
   <script src="./../dist/awesome-editor.js"></script>
   <script>
-    let Editor = new AwesomeEditor({
+    window.Editor = new AwesomeEditor({
       el: '#editor-box',
       onChange: (content) => {
         console.log(content)

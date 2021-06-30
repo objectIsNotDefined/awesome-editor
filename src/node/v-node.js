@@ -55,7 +55,9 @@ class VNode {
           classList.push(key)
         }
       })
-      element.className = classList.join(' ')
+      if (classList.length) {
+        element.className = classList.join(' ')
+      }
     }
     if (this.$flag === VNodeFlags.LINK) {
       element.setAttribute('href', this.$attr.url)

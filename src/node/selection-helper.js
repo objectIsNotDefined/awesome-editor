@@ -67,7 +67,6 @@ export function refreashSelection ({vnodes_l, vnodes_m, vnodes_r}) {
       endOffset = 0
   // 光标没有选中任何区域
   if (vnodes_m.length === 0) {
-    console.log({vnodes_l, vnodes_m, vnodes_r})
     // 光标在行首
     if (vnodes_l.length === 0 && vnodes_r.length) {
       startContainer = vnodes_r[0].$ele.childNodes[0]

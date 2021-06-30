@@ -5,7 +5,8 @@ import VNode from './v-node'
 import { 
   EnterEvent,
   BoldEvent,
-  DeleteEvent,
+  DeleteUpEvent,
+  DeleteDownEvent,
   ItalicEvent,
   UnderlineEvent,
   LineThroughEvent
@@ -67,6 +68,10 @@ class Node {
   // 绑定节点事件
   _initEvent () {
     this.$el.on('keydown', '.input-warp', (e) => {
+      // 删除事件
+      if (e.keyCode === 8) {
+        DeleteDownEvent(e, this)
+      }
       // 回车换行 enter
       if (e.keyCode === 13) {
         EnterEvent(e, this)
@@ -91,7 +96,7 @@ class Node {
     // 删除事件，keyup触发，保持容器结构
     this.$el.on('keyup', '.input-warp', (e) => {
       if (e.keyCode === 8) {
-        DeleteEvent(e, this)
+        DeleteUpEvent(e, this)
       }
     })
   }
@@ -108,7 +113,17 @@ class Node {
 
   // 节点移除
   remove() {
-
+    let editorNodes = this.$editor.$content.$nodes
+    // 如果当前节点是编辑器唯一的节点，则不能删除
+    if (editorNodes.length === 1) return
+    this.$el.remove()
+    let currentNodeIndex = editorNodes.indexOf(this)
+    editorNodes.splice(currentNodeIndex, 1)
+    if (currentNodeIndex === 0) {
+      editorNodes[0].focus()
+    } else {
+      editorNodes[currentNodeIndex - 1].focus()
+    }
   }
 
   // 将节点插入制定位置
@@ -125,8 +140,9 @@ class Node {
       })
       $nodeList.splice(index + 1, 0, this)
       this.$el.insertAfter($nodeList[index].$el)
-      this.focus()
+      
     }
+    this.focus()
   }
 
 }
