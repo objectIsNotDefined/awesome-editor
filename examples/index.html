@@ -12,7 +12,7 @@
       right: 0;
       top: 0;
       bottom: 0;
-      background-color: #fff;
+      background-color: #f7f8f9;
       display: flex;
       align-items: stretch;
       justify-content: center;
@@ -21,6 +21,7 @@
     #editor-box {
       width: 700px;
       overflow: auto;
+      background-color: #fff;
     }
   </style>
 </head>
@@ -39,24 +40,18 @@
       }
     })
     Editor.setValue([
-      { type: 1, content: '一级标题', attr: {level: 1} },
-      { type: 1, content: '二级标题', attr: {level: 2} },
-      { type: 1, content: '三级标题', attr: {level: 3} },
-      { type: 2, 
-        content: '', 
+      { type: 'head', content: '一级标题', attr: { level: 1 } },
+      { type: 'head', content: '二级标题', attr: { level: 2 } },
+      { type: 'head', content: '三级标题', attr: { level: 3 } },
+      {
+        type: 'paragraph',
         child: [
-          { type: 21, content: '四川', attr: { bold: 1 } },
-          { type: 21, content: '成都', attr: { bold: 1 } },
-          { type: 21, content: '博普云达', attr: { underline: 1 } },
-          { type: 21, content: '科技', attr: { underline: 1, lineThrough: 1 } },
-          { type: 21, content: '有限公司', attr: { color: 'red' } }
-        ]
-      },
-      { 
-        type: 2,
-        content: '',
-        child: [
-          { type: 21, content: '', attr: {} }
+          { type: 'text', content: '成都', attr: { bold: 1, color: 'green' } },
+          { type: 'text', content: '博普云达', attr: { underline: 1, color: 'yellow' } },
+          { type: 'text', content: '科技', attr: { lineThrough: 1 } },
+          { type: 'text', content: '有限', attr: { italic: 1 } },
+          { type: 'text', content: '公司', attr: { color: 'red' } },
+          { type: 'link', content: '博普智库', attr: { url: 'https://zhiku.bopuyun.com' } }
         ]
       }
     ])

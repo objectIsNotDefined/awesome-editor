@@ -1,5 +1,5 @@
 import VNode from './v-node'
-import $ from './../util/dom-core'
+import $ from '@/util/dom-core'
 
 export function selectionFormat (target) {
   const childNode = [...target.childNodes]

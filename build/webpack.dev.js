@@ -11,6 +11,11 @@ module.exports = {
       export: 'default'
     }
   },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './../src')
+    }
+  },
   module: {
     rules: [
       {

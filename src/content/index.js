@@ -30,9 +30,9 @@ class Content {
     if (data.length === 0) {
       data = [
         {
-          type: 2,
-          content: '',
-          child: [ {type: 21, content: '欢迎使用awesome-editor', attr: {}} ]
+          type: 'head',
+          content: '标题',
+          attr: { level: 1 }
         }
       ]
     }

@@ -9,7 +9,9 @@ import {
   DeleteDownEvent,
   ItalicEvent,
   UnderlineEvent,
-  LineThroughEvent
+  LineThroughEvent,
+  CopyEvent,
+  PasteEvent
 } from './keyboard-events'
 class Node {
 
@@ -26,7 +28,7 @@ class Node {
   constructor (options, $editor) {
     this.$editor = $editor
     this.$key = options.id || getRandomStr()
-    this.$type = options.type || 1
+    this.$type = options.type || 'paragraph'
     this.$attr = options.attr
     this._init(options)
   }
@@ -39,7 +41,7 @@ class Node {
   // 初始化节点容器
   _initDom (options) {
     let classNames = ''
-    if (this.$type === 1) {
+    if (this.$type === 'head') {
       classNames = `heading${options?.attr?.level || 1}`
     }
     this.$el = $(`<div class="node-item ${classNames}" data-key="${this.$key}">
@@ -47,15 +49,15 @@ class Node {
       <div class="input-warp" contenteditable="true"></div>
     </div>`)
     // 初始化内容
-    if (this.$type === 1) {
+    if (this.$type === 'head') {
       let $text = $(`<span>${options.content || '<br/>'}</span>`)
       this.$el.find('.input-warp').empty().append($text)
     }
-    if (this.$type === 2) {
+    if (this.$type === 'paragraph') {
       let vnodes = []
       if (options.vnodes) {
         // 如果是空，则初始化一个vnode
-        vnodes = options.vnodes.length? options.vnodes : [new VNode({type: 21, content: '', attr: {}})]
+        vnodes = options.vnodes.length? options.vnodes : [new VNode({ type: 'text', content: '' })]
       } else {
         vnodes = options.child.map(item => VNode.create(item))
       }
@@ -99,6 +101,13 @@ class Node {
         DeleteUpEvent(e, this)
       }
     })
+    // 复制/粘贴事件
+    this.$el.on('copy', (e) => {
+      CopyEvent(e, this)
+    })
+    this.$el.on('paste', (e) => {
+      PasteEvent(e, this)
+    })
   }
 
   // 根据vnode刷新节点内容
@@ -140,7 +149,6 @@ class Node {
       })
       $nodeList.splice(index + 1, 0, this)
       this.$el.insertAfter($nodeList[index].$el)
-      
     }
     this.focus()
   }

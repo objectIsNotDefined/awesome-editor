@@ -6,28 +6,35 @@ const VNodeFlags = {
   LINK: 'A' // 超链接
 }
 
+const DefaultOption = {
+  type: 'text',
+  content: '',
+  attr: {}
+}
+
 // 行内节点
 class VNode {
 
   $flag = null  // 节点类型
 
-  $text = null  // 节点文本
+  $content = null  // 节点文本
   
   $attr = {}    // bold delete color
 
   $ele = null   // 节点的dom映射
 
-  constructor (option) {
-    this.$flag = option.flag || VNodeFlags.TEXT
-    this.$text = option.text || ''
+  constructor (option = {}) {
+    const _option = Object.assign({}, DefaultOption, option)
+    this.$flag = _option.flag || VNodeFlags[_option.type.toUpperCase()]
+    this.$content = _option.content || ''
     this.$attr = { ...option.attr }
   }
 
   // 节点切片，参考String.prototype.slice
   slice (start, end) {
-    let _text = this.$text.slice(start, end)
+    let _text = this.$content.slice(start, end)
     return new VNode({
-      text: _text,
+      content: _text,
       flag: this.$flag,
       attr: this.$attr
     })
@@ -35,7 +42,7 @@ class VNode {
 
   // 更新内容
   updateContent (val) {
-    this.$text = val
+    this.$content = val
   }
 
   // 更新节点
@@ -45,7 +52,7 @@ class VNode {
 
   compile () {
     let element = document.createElement(this.$flag)
-    element.innerHTML = this.$text || '<br/>'
+    element.innerHTML = this.$content || '<br/>'
     if(this.$flag === VNodeFlags.TEXT) {
       let classList = []
       Object.keys(this.$attr).forEach(key => {
@@ -61,6 +68,7 @@ class VNode {
     }
     if (this.$flag === VNodeFlags.LINK) {
       element.setAttribute('href', this.$attr.url)
+      element.setAttribute('target', '_blank')
     }
     this.$ele = element
     return element
@@ -82,7 +90,7 @@ class VNode {
   static createByElement = (ele) => {
     const _option = {
       flag: undefined,
-      text: ele.textContent,
+      content: ele.textContent,
       attr: {}
     }
     if (ele.nodeType === 1 && ele.nodeName === 'SPAN') {
@@ -112,13 +120,9 @@ class VNode {
 
   // 根据编辑器原始数据创建vnode
   static createByData = (data) => {
-    let typeFlagMap = {
-      [21]: VNodeFlags.TEXT,
-      [22]: VNodeFlags.LINK
-    }
     const _option = {
-      flag: typeFlagMap[data.type],
-      text: data.content,
+      type: data.type,
+      content: data.content,
       attr: { ...data.attr }
     }
     return new VNode(_option)
@@ -140,10 +144,10 @@ class VNode {
     for (let i = 0, len = list.length; i < len; i++) {
       let node = list[i]
       let prevNode = _list[_list.length - 1]
-      if (node.$text.length === 0) continue
+      if (node.$content.length === 0) continue
       // 如果已经有值
       if (prevNode && node.isSimilarTo(prevNode)) {
-        prevNode.updateContent(prevNode.$text + node.$text)
+        prevNode.updateContent(prevNode.$content + node.$content)
       } else {
         _list.push(node)
       }

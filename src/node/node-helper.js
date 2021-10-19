@@ -14,7 +14,7 @@ export function refreashNodeContent ({vnodes_l, vnodes_m, vnodes_r}, $node) {
     $input.append($(node.compile()))
   })
   if (!vnodes_l.length && !vnodes_m.length && !vnodes_r.length) {
-    let emptyVNode = new VNode({type: 21, content: '', attr: {}})
+    let emptyVNode = new VNode({type: 'text', content: '', attr: {}})
     $input.append($(emptyVNode.compile()))
   }
 }
