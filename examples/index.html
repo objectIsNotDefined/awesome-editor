@@ -27,34 +27,32 @@
 </head>
 <body>
   <div id="app">
-    <div id="editor-box">
-
-    </div>
+    <div id="editor-box"></div>
   </div>
   <script src="./../dist/awesome-editor.js"></script>
   <script>
     window.Editor = new AwesomeEditor({
       el: '#editor-box',
+      content: [
+        { type: 'head', content: '一级标题', attr: { level: 1 } },
+        { type: 'head', content: '二级标题', attr: { level: 2 } },
+        { type: 'head', content: '三级标题', attr: { level: 3 } },
+        {
+          type: 'paragraph',
+          child: [
+            { type: 'text', content: '成都', attr: { bold: 1, color: 'green' } },
+            { type: 'text', content: '博普云达', attr: { underline: 1, color: 'yellow' } },
+            { type: 'text', content: '科技', attr: { lineThrough: 1 } },
+            { type: 'text', content: '有限', attr: { italic: 1 } },
+            { type: 'text', content: '公司', attr: { color: 'red' } },
+            { type: 'link', content: '博普智库', attr: { url: 'https://zhiku.bopuyun.com' } }
+          ]
+        }
+      ],
       onChange: (content) => {
         console.log(content)
       }
     })
-    Editor.setValue([
-      { type: 'head', content: '一级标题', attr: { level: 1 } },
-      { type: 'head', content: '二级标题', attr: { level: 2 } },
-      { type: 'head', content: '三级标题', attr: { level: 3 } },
-      {
-        type: 'paragraph',
-        child: [
-          { type: 'text', content: '成都', attr: { bold: 1, color: 'green' } },
-          { type: 'text', content: '博普云达', attr: { underline: 1, color: 'yellow' } },
-          { type: 'text', content: '科技', attr: { lineThrough: 1 } },
-          { type: 'text', content: '有限', attr: { italic: 1 } },
-          { type: 'text', content: '公司', attr: { color: 'red' } },
-          { type: 'link', content: '博普智库', attr: { url: 'https://zhiku.bopuyun.com' } }
-        ]
-      }
-    ])
   </script>
 </body>
 </html>

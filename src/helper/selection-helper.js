@@ -1,6 +1,8 @@
-import VNode from './v-node'
 import $ from '@/util/dom-core'
+import VNode from '@/node/vnode'
+import { MergeList } from '@/helper/vnode-helper'
 
+// 根据dom格式化节点 vnodes
 export function selectionFormat (target) {
   const childNode = [...target.childNodes]
   const selection = window.getSelection? window.getSelection() : document.getSelection()
@@ -53,14 +55,14 @@ export function selectionFormat (target) {
     }
   }
   return {
-    vnodes_l: VNode.formatVNodes(vnodes_l),
-    vnodes_m: VNode.formatVNodes(vnodes_m),
-    vnodes_r: VNode.formatVNodes(vnodes_r)
+    vnodes_l: MergeList(vnodes_l),
+    vnodes_m: MergeList(vnodes_m),
+    vnodes_r: MergeList(vnodes_r)
   }
 }
 
-// 设置选区
-export function refreashSelection ({vnodes_l, vnodes_m, vnodes_r}) {
+// 设置行内选区
+export function refreashSelection({ vnodes_l, vnodes_m, vnodes_r }) {
   let startContainer = null,
       startOffset = 0,
       endContainer = null,

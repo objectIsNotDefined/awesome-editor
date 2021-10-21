@@ -1,7 +1,7 @@
-import './assets/styles/index.less'
+import '@/styles/index.less'
 
-import $ from './util/dom-core'
-import Content from './content/index'
+import $ from '@/util/dom-core'
+import Node from '@/node'
 
 class AwesomeEditor {
 
@@ -9,26 +9,42 @@ class AwesomeEditor {
 
   $content = null  // 编辑器内容
 
-  constructor ({el, uploadImg}) {
+  $nodes = [] // 节点列表
+
+  #initialContent = []
+
+  constructor ({el, uploadImg, onChange, content = []}) {
     this.$el = $(el)
-    this._init()
+    this.#initialContent = content
+    this.#init()
   }
 
-  _init () {
-    this._initEditor()
-    this._initContent()
+  #init () {
+    this.#initEditor()
   }
 
-  _initEditor () {
+  #initEditor () {
     this.$el.addClass('awesome-editor')
+    this.update(this.#initialContent)
   }
 
-  _initContent () {
-    this.$content = new Content(this)
+  // 手动更新编辑器内容
+  update (content = []) {
+    console.log('更新编辑器内容', content)
+    // 先清空编辑器
+    this.$el.empty()
+    // 遍历节点
+    this.$nodes = content.map(item => {
+      const $node = new Node(item, this)
+      $node.insertAfter(false)
+      return $node
+    })
   }
 
-  setValue (data = []) {
-    this.$content.setValue(data)
+  // 创建编辑器
+  static create ({ el, uploadImg, onChange, content = [] }) {
+    const Editor = new AwesomeEditor({ el, uploadImg, onChange, content })
+    Editor.update()
   }
 
 }

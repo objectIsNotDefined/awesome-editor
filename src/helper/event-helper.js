@@ -1,30 +1,40 @@
-import VNode from './v-node'
-import { selectionFormat, refreashSelection } from './selection-helper'
-import { getCursorPosition } from './../util/selection'
-import Node from './index'
+import Node from '@/node'
+import VNode from '@/node/vnode'
+
+import {
+  MergeList
+} from '@/helper/vnode-helper'
+
+import {
+  getCursorPosition
+} from '@/util/selection'
+
+import {
+  selectionFormat,
+  refreashSelection
+} from '@/helper/selection-helper'
 
 // 删除 keydown
 export function DeleteDownEvent (e, $node) {
-  
   let inputInnerHTML = e.target.innerHTML
   // keydown - 如果当前数据为空，则删除该行
   if (e.target.innerHTML === '<span><br></span>') {
     e.preventDefault()
     $node.remove()
+    console.log('remove')
     return
   }
   // 光标在行首, 自动合并至上一行
   let rangeObj = getCursorPosition()
-  let currentNodeIndex = $node.$editor.$content.$nodes.indexOf($node)
+  let currentNodeIndex = $node.$editor.$nodes.indexOf($node)
   if (rangeObj.start === 0 && rangeObj.end === 0 && currentNodeIndex !== 0) {
     e.preventDefault()
-    let prevNode = $node.$editor.$content.$nodes[currentNodeIndex - 1]
-    let prevVNode = [...prevNode.$el.find('.input-warp').nodeList[0].childNodes].map(el => VNode.create(el))
-    let nextVNode = [...$node.$el.find('.input-warp').nodeList[0].childNodes].map(el => VNode.create(el))
+    let prevNode = $node.$editor.$nodes[currentNodeIndex - 1]
+    let prevVNode = [...prevNode.$el.find('.input-wrap').nodeList[0].childNodes].map(el => VNode.create(el))
+    let nextVNode = [...$node.$el.find('.input-wrap').nodeList[0].childNodes].map(el => VNode.create(el))
     $node.remove()
-    let vnodeConfig = {vnodes_l: VNode.formatVNodes(prevVNode), vnodes_m: [], vnodes_r: VNode.formatVNodes(nextVNode)}
-    prevNode.refreashByVnodes(vnodeConfig)
-    refreashSelection(vnodeConfig)
+    let vnodeConfig = {vnodes_l: MergeList(prevVNode), vnodes_m: [], vnodes_r: MergeList(nextVNode)}
+    prevNode.update(vnodeConfig)
   }
 }
 
@@ -43,7 +53,7 @@ export function EnterEvent (e, $node) {
   e.preventDefault()
   if (!['head', 'paragraph'].includes($node.$type)) return
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
-  $node.refreashByVnodes({vnodes_l: [], vnodes_m: [], vnodes_r: vnodes_l})
+  $node.update({vnodes_l: [], vnodes_m: [], vnodes_r: vnodes_l})
   let newLineOptions = {
     type: 'paragraph',
     content: '',
@@ -51,7 +61,7 @@ export function EnterEvent (e, $node) {
   }
   let newLine = new Node(newLineOptions, $node.$editor)
   newLine.insertAfter($node)
-  newLine.$el.find('.input-warp').focus(1)
+  newLine.focus(1)
 }
 
 // ctrl/cmd + b 加粗
@@ -62,14 +72,14 @@ export function BoldEvent (e, $node) {
   // 如果没有选中区，则直接对整行进行操作
   if (vnodes_m.length === 0) {
     let nextStatus = vnodes_l.every(vnode => vnode.$attr.bold) && vnodes_r.every(vnode => vnode.$attr.bold)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.update('bold', nextStatus))
-    vnodes_r.forEach(vnode => vnode.update('bold', nextStatus))
+    vnodes_l.forEach(vnode => vnode.updateAttr('bold', nextStatus))
+    vnodes_r.forEach(vnode => vnode.updateAttr('bold', nextStatus))
   } else {
     let nextStatus = vnodes_m.every(vnode => vnode.$attr.bold)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.update('bold', nextStatus))
+    vnodes_m.forEach(vnode => vnode.updateAttr('bold', nextStatus))
   }
-  $node.refreashByVnodes({ vnodes_l, vnodes_m, vnodes_r })
-  refreashSelection({vnodes_l, vnodes_m, vnodes_r})
+  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // ctrl/cmd + i 斜体
@@ -80,14 +90,14 @@ export function ItalicEvent (e, $node) {
   // 如果没有选中区，则直接对整行进行操作
   if (vnodes_m.length === 0) {
     let nextStatus = vnodes_l.every(vnode => vnode.$attr.italic) && vnodes_r.every(vnode => vnode.$attr.italic)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.update('italic', nextStatus))
-    vnodes_r.forEach(vnode => vnode.update('italic', nextStatus))
+    vnodes_l.forEach(vnode => vnode.updateAttr('italic', nextStatus))
+    vnodes_r.forEach(vnode => vnode.updateAttr('italic', nextStatus))
   } else {
     let nextStatus = vnodes_m.every(vnode => vnode.$attr.italic)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.update('italic', nextStatus))
+    vnodes_m.forEach(vnode => vnode.updateAttr('italic', nextStatus))
   }
-  $node.refreashByVnodes({ vnodes_l, vnodes_m, vnodes_r })
-  refreashSelection({vnodes_l, vnodes_m, vnodes_r})
+  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // ctrl/cmd + u 下划线
@@ -98,14 +108,14 @@ export function UnderlineEvent (e, $node) {
   // 如果没有选中区，则直接对整行进行操作
   if (vnodes_m.length === 0) {
     let nextStatus = vnodes_l.every(vnode => vnode.$attr.underline) && vnodes_r.every(vnode => vnode.$attr.underline)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.update('underline', nextStatus))
-    vnodes_r.forEach(vnode => vnode.update('underline', nextStatus))
+    vnodes_l.forEach(vnode => vnode.updateAttr('underline', nextStatus))
+    vnodes_r.forEach(vnode => vnode.updateAttr('underline', nextStatus))
   } else {
     let nextStatus = vnodes_m.every(vnode => vnode.$attr.underline)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.update('underline', nextStatus))
+    vnodes_m.forEach(vnode => vnode.updateAttr('underline', nextStatus))
   }
-  $node.refreashByVnodes({ vnodes_l, vnodes_m, vnodes_r })
-  refreashSelection({vnodes_l, vnodes_m, vnodes_r})
+  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // ctrl/cmd + h 中划线
@@ -116,35 +126,50 @@ export function LineThroughEvent (e, $node) {
   // 如果没有选中区，则直接对整行进行操作
   if (vnodes_m.length === 0) {
     let nextStatus = vnodes_l.every(vnode => vnode.$attr.lineThrough) && vnodes_r.every(vnode => vnode.$attr.lineThrough)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.update('lineThrough', nextStatus))
-    vnodes_r.forEach(vnode => vnode.update('lineThrough', nextStatus))
+    vnodes_l.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
+    vnodes_r.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
   } else {
     let nextStatus = vnodes_m.every(vnode => vnode.$attr.lineThrough)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.update('lineThrough', nextStatus))
+    vnodes_m.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
   }
-  $node.refreashByVnodes({ vnodes_l, vnodes_m, vnodes_r })
-  refreashSelection({vnodes_l, vnodes_m, vnodes_r})
+  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // 复制
 export function CopyEvent (e, $node) {
   e.preventDefault()
-  const clipboardData = event.clipboardData || window.clipboardData 
-  let { vnodes_m } = selectionFormat($node.$el.find('.input-warp').nodeList[0])
+  const clipboardData = event.clipboardData || window.clipboardData
+  let { vnodes_m } = selectionFormat($node.$el.find('.input-wrap').nodeList[0])
   const copyData = vnodes_m.map(node => {
     const item = {
-      type: node.type,
-      text: node.content
+      type: node.$type,
+      content: node.$content,
+      attr: { ...node.$attr }
     }
-    node.type === 2 && (item.content_id = node.content_id)
-    node.type === 2 && (item.content_type = node.content_type)
     return item
   })
-  console.log(copyData)
   clipboardData.setData('text/plain', JSON.stringify(copyData))
 }
 
 // 粘贴
 export function PasteEvent (e, $node) {
-
+  e.preventDefault()
+  // const clipboardData = event.clipboardData || window.clipboardData
+  // let text = clipboardData.getData('text/plain')
+  // try {
+  //   text = JSON.parse(text)
+  //   formatData = text
+  // } catch (e) {
+  //   text = text.replace(/[\r\n\r\f\v]/g, '')
+  //   formatData = [{ type: 1, text }]
+  // }
+  // let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat($editor.$el[0])
+  // vnodes_m = formatData.map(item => VNode.create(item))
+  // $editor.refreashByVnodes({
+  //   vnodes_l: [...vnodes_l, ...vnodes_m],
+  //   vnodes_m: [],
+  //   vnodes_r
+  // })
 }
+
