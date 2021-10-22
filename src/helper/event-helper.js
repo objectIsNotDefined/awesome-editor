@@ -10,8 +10,7 @@ import {
 } from '@/util/selection'
 
 import {
-  selectionFormat,
-  refreashSelection
+  selectionFormat
 } from '@/helper/selection-helper'
 
 // 删除 keydown
@@ -76,10 +75,10 @@ export function BoldEvent (e, $node) {
     vnodes_r.forEach(vnode => vnode.updateAttr('bold', nextStatus))
   } else {
     let nextStatus = vnodes_m.every(vnode => vnode.$attr.bold)? 0 : 1
+    debugger
     vnodes_m.forEach(vnode => vnode.updateAttr('bold', nextStatus))
   }
   $node.update({ vnodes_l, vnodes_m, vnodes_r })
-  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // ctrl/cmd + i 斜体
@@ -97,7 +96,6 @@ export function ItalicEvent (e, $node) {
     vnodes_m.forEach(vnode => vnode.updateAttr('italic', nextStatus))
   }
   $node.update({ vnodes_l, vnodes_m, vnodes_r })
-  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // ctrl/cmd + u 下划线
@@ -115,7 +113,6 @@ export function UnderlineEvent (e, $node) {
     vnodes_m.forEach(vnode => vnode.updateAttr('underline', nextStatus))
   }
   $node.update({ vnodes_l, vnodes_m, vnodes_r })
-  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // ctrl/cmd + h 中划线
@@ -133,7 +130,6 @@ export function LineThroughEvent (e, $node) {
     vnodes_m.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
   }
   $node.update({ vnodes_l, vnodes_m, vnodes_r })
-  // refreashSelection({vnodes_l, vnodes_m, vnodes_r})
 }
 
 // 复制

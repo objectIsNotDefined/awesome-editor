@@ -1,6 +1,7 @@
 import $ from '@/util/dom-core'
 import { getRandomStr } from '@/util/util'
 import VNode from './vnode'
+import NodeToolbar from '@/toolbar/node-toolbar'
 
 import {
   DeleteDownEvent,
@@ -118,17 +119,11 @@ class Node {
     let timmerId = null
 
     // 绑定左侧操作按钮
-    this.$el.on('mouseover', '.bullet-wrapper', function (e) {
-      clearTimeout(timmerId)
-      timmerId = setTimeout(() => {
-        console.log('显示工具栏')
-      }, 1000)
+    this.$el.on('mouseover', '.bullet-wrapper', (e) => {
+      NodeToolbar.show(this)
     })
-    this.$el.on('mouseout', '.bullet-wrapper', function (e) {
-      clearTimeout(timmerId)
-      timmerId = setTimeout(() => {
-        console.log('关闭工具栏')
-      }, 1000)
+    this.$el.on('mouseout', '.bullet-wrapper', (e) => {
+      NodeToolbar.hide(this)
     })
   }
 
