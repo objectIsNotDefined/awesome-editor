@@ -16,7 +16,6 @@ import {
 } from '@/helper/event-helper'
 
 import {
-  refreashNodeContent,
   updateNodeContent
 } from '@/helper/node-helper'
 
@@ -33,6 +32,9 @@ class Node {
   $key = null     // node唯一标识符
 
   constructor (options, $editor) {
+    if (options.attr) {
+      options.attr = { ...options.attr }
+    }
     this.$editor = $editor
     this.$type = options.type || 'paragraph'
     this.$attr = options.attr || {}
@@ -42,11 +44,24 @@ class Node {
 
   #init (options) {
     this.#initDom(options)
-    this.#initEvent()
+    this.#bindEvent()
   }
 
   // 初始化节点容器
   #initDom (options) {
+    if (['head', 'paragraph'].includes(this.$type)) {
+      this.#initTextNodeDom(options)
+    }
+    if (['image'].includes(this.$type)) {
+      this.#initImageNodeDom()
+    }
+    if (['table'].includes(this.$type)) {
+
+    }
+  }
+
+  // 初始化head、paragraph节点
+  #initTextNodeDom (options) {
     let classNames = ''
     if (this.$type === 'head') {
       classNames = `heading${options?.attr?.level || 1}`
@@ -66,6 +81,11 @@ class Node {
         // 如果是空，则初始化一个vnode
         vnodes = options.vnodes.length? options.vnodes : [new VNode({ type: 'text', content: '' })]
       } else {
+        if (options.child.length === 0) {
+          options.child = [
+            { type: 'text', content: '', attr: {} }
+          ]
+        }
         vnodes = options.child.map(item => VNode.create(item))
       }
       vnodes.forEach(vnode => {
@@ -74,8 +94,41 @@ class Node {
     }
   }
 
+  // 初始化文字节点
+  #initImageNodeDom (options) {
+    this.$el = $(`<div class="node-item node-type-image" data-key="${this.$key}">
+      <div class="bullet-wrapper"></div>
+      <div class="image-wrapper">
+        <div class="image-box">
+          <img src="${this.$attr.url}" alt="">
+        </div>
+      </div>
+    </div>`)
+  }
+
   // 绑定节点事件
-  #initEvent () {
+  #bindEvent () {
+    if (['head', 'paragraph'].includes(this.$type)) {
+      this.#bindTextEvent()
+    }
+    if (this.$type === 'image') {
+      this.#bindImageEvent()
+    }
+    if (this.$type === 'table') {
+      this.#bindTableEvent()
+    }
+
+    // 绑定左侧操作按钮
+    this.$el.on('mouseover', '.bullet-wrapper', (e) => {
+      NodeToolbar.show(this)
+    })
+    this.$el.on('mouseout', '.bullet-wrapper', (e) => {
+      NodeToolbar.hide(this)
+    })
+  }
+
+  // head 节点
+  #bindTextEvent () {
     this.$el.on('keydown', '.input-wrap', (e) => {
       // 删除事件
       if (e.keyCode === 8) {
@@ -115,21 +168,24 @@ class Node {
     this.$el.on('paste', (e) => {
       PasteEvent(e, this)
     })
-
-    let timmerId = null
-
-    // 绑定左侧操作按钮
-    this.$el.on('mouseover', '.bullet-wrapper', (e) => {
-      NodeToolbar.show(this)
-    })
-    this.$el.on('mouseout', '.bullet-wrapper', (e) => {
-      NodeToolbar.hide(this)
-    })
   }
 
-  // 根据vnode刷新节点内容
-  refreashByVnodes (nodeInfo) {
-    refreashNodeContent(nodeInfo, this)
+  // image 节点
+  #bindImageEvent () {
+
+  }
+
+  // table 节点
+  #bindTableEvent () {
+
+  }
+
+  triggerHover (status) {
+    if (status) {
+      this.$el.addClass('hovered')
+    } else {
+      this.$el.removeClass('hovered')
+    }
   }
 
   // 刷新节点内容

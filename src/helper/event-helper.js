@@ -75,7 +75,6 @@ export function BoldEvent (e, $node) {
     vnodes_r.forEach(vnode => vnode.updateAttr('bold', nextStatus))
   } else {
     let nextStatus = vnodes_m.every(vnode => vnode.$attr.bold)? 0 : 1
-    debugger
     vnodes_m.forEach(vnode => vnode.updateAttr('bold', nextStatus))
   }
   $node.update({ vnodes_l, vnodes_m, vnodes_r })
@@ -151,21 +150,5 @@ export function CopyEvent (e, $node) {
 // 粘贴
 export function PasteEvent (e, $node) {
   e.preventDefault()
-  // const clipboardData = event.clipboardData || window.clipboardData
-  // let text = clipboardData.getData('text/plain')
-  // try {
-  //   text = JSON.parse(text)
-  //   formatData = text
-  // } catch (e) {
-  //   text = text.replace(/[\r\n\r\f\v]/g, '')
-  //   formatData = [{ type: 1, text }]
-  // }
-  // let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat($editor.$el[0])
-  // vnodes_m = formatData.map(item => VNode.create(item))
-  // $editor.refreashByVnodes({
-  //   vnodes_l: [...vnodes_l, ...vnodes_m],
-  //   vnodes_m: [],
-  //   vnodes_r
-  // })
 }
 

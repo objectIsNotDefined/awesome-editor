@@ -1,3 +1,6 @@
+div {
+  box-sizing: border-box;
+}
 .awesome-editor {
   font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,"\5FAE\8F6F\96C5\9ED1",Arial,sans-serif;
   .node-item {
@@ -10,6 +13,7 @@
       font-size: 14px;
       color: #555659;
       & > span {
+        word-break: break-all;
         &.bold {
           font-weight: 900;
         }
@@ -99,5 +103,26 @@
       background-color: rgba(88, 86, 213, 0.14) !important;
       border-radius: 4px;
     }
+    &.node-type-image {
+      .image-wrapper {
+        margin-left: 28px;
+        padding: 10px 0;
+        .image-box {
+          overflow: hidden;
+          display: inline-block;
+          border: 2px solid transparent;
+          cursor: pointer;
+          img {
+            float: left;
+            max-width: 100%;
+          }
+          &.active, &:hover {
+            border-color: #3370ff;
+          }
+        }
+        
+      }
+    }
   }
+  @import './toolbar.less';
 }

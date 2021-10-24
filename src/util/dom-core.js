@@ -122,6 +122,17 @@ class DomElement {
     })
   }
 
+  attr (key, val) {
+    if (val) {
+      this.nodeList.forEach(node => {
+        node.setAttribute(key, val)
+      })
+      return this
+    } else {
+      return this.nodeList[0].getAttribute(key)
+    }
+  }
+
   // 聚焦dom type -1 行尾 1 行首
   focus(type = -1) {
     if (this.nodeList.length === 0) return

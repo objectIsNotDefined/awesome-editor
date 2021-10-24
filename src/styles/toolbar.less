@@ -1,0 +1,33 @@
+.node-toolbar-wrap {
+  width: 120px;
+  position: fixed;
+  box-shadow: rgb(0 0 0 / 16%) 0px 2px 10px 0px;
+  user-select: none;
+  border-radius: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #fff;
+  z-index: 20;
+  animation: fadeUp .3s ease;
+  transform-origin: top left;
+  padding: 8px 0;
+  .insert-node {
+    text-align: center;
+    font-size: 14px;
+    line-height: 24px;
+    color: #555659;
+    cursor: pointer;
+    &:hover {
+      background-color: rgb(233, 233, 235);
+    }
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
