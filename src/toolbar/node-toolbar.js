@@ -56,38 +56,44 @@ class Toolbar {
     this.$el.on('mouseout', (e) => {
       this.hide(this.#CurrentNode)
     })
-    this.$el.on('click', '.insert-node', (e) => {
+    this.$el.on('click', '.insert-node', async (e) => {
       const handleKey = $(e.target).attr('handle-key')
-      const newNodeConfig = this.#getNodeOptionsByHandleKey(handleKey)
+      const newNodeConfig =  await this.#getNodeOptionsByHandleKey(handleKey)
+      if (!newNodeConfig) return
       const newNode = new Node(newNodeConfig, this.#CurrentNode.$editor)
       newNode.insertAfter(this.#CurrentNode)
     })
   }
 
-  #getNodeOptionsByHandleKey (key) {
+  async #getNodeOptionsByHandleKey (key) {
+    const $editor = this.#CurrentNode.$editor
     const HandeMap = {
-      insertHead () {
+      insertHead: async () => {
         return { type: 'head', content: '', attr: {} }
       },
-      insertParagraph () {
+      insertParagraph: async () => {
         return { type: 'paragraph', child: [] }
       },
-      insertImage () {
-        return { type: 'image', content: '', attr: { url: 'https://bpy-store.oss-cn-hangzhou.aliyuncs.com/ppc/1d/1d14a90d31fa8946b44836237551d898/%E3%80%90Web_%E8%BD%AE%E6%92%AD%E3%80%91%E5%B7%A5%E5%85%B7%E5%88%86%E4%BA%AB%E6%B4%BB%E5%8A%A8.jpg' } }
+      insertImage: async () => {
+        if ($editor.$uploadImage && typeof $editor.$uploadImage === 'function') {
+          const url = await $editor.$uploadImage()
+          return { type: 'image', content: '', attr: { url } }
+        }
       },
-      insertTable () {
+      insertTable: async () => {
         return {
-          type: 'table', attr: {
+          type: 'table',
+          attr: {
             data: [
-              ['表头1', '表头2', '表头3'],
-              ['', '', ''],
-              ['', '', '']
+              ['表头1', '表头2', '表头3', '表头3'],
+              ['', '', '', ''],
+              ['', '', '', '']
             ]
           }
         }
       }
     }
-    return HandeMap[key]()
+    return await HandeMap[key]()
   }
 
   #destroy ($node) {

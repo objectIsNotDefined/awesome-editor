@@ -1,5 +1,6 @@
-div {
+* {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .awesome-editor {
   font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,"\5FAE\8F6F\96C5\9ED1",Arial,sans-serif;
@@ -102,6 +103,50 @@ div {
     &.hovered {
       background-color: rgba(88, 86, 213, 0.14) !important;
       border-radius: 4px;
+    }
+    &.node-type-table {
+      padding: 10px 0;
+      .table-wrapper {
+        margin-left: 28px;
+        border: 1px solid #dedede;
+        overflow-x: auto;
+        table {
+          text-align: center;
+          border-collapse: collapse;
+          border-spacing: 0;
+          table-layout: fixed;
+          color: #8c8e8f;
+          min-width: 100%;
+          tbody tr {
+            background-color: #ffffff;
+            &:not(:first-child) {
+              border-top: 1px solid #dedede;
+            }
+            td {
+              min-width: 150px;
+              &:not(:last-child) {
+                border-right: 1px solid #dedede;
+              }
+              & > input {
+                width: 100%;
+                height: 40px;
+                border: none;
+                outline: none;
+                font-size: 14px;
+                padding: 0 8px;
+                text-align: center;
+                background-color: transparent;
+              }
+            }
+            &:first-child {
+              background-color: #f7f8fb;
+              td input {
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
     }
     &.node-type-image {
       .image-wrapper {

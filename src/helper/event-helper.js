@@ -150,5 +150,49 @@ export function CopyEvent (e, $node) {
 // 粘贴
 export function PasteEvent (e, $node) {
   e.preventDefault()
+  const clipboardData = event.clipboardData || window.clipboardData
+  let text = clipboardData.getData('text/plain')
+  // 尝试当作json处理
+  try {
+    let vnodeArr = JSON.parse(text)
+    vnodeArr = vnodeArr.map(opt => VNode.create(opt))
+    let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat($node.$el.find('.input-wrap').nodeList[0])
+    $node.update({
+      vnodes_l: [...vnodes_l, ...vnodeArr],
+      vnodes_m: [],
+      vnodes_r
+    })
+  } catch (e) {
+    let txtArr = text = text.split(/[\t\r\n\v]/m)
+    txtArr = text.reduce((arr, txt) => {
+      txt = txt.trim()
+      if (txt) {
+        arr.push(txt)
+      }
+      return arr
+    }, [])
+    let prevNode = $node
+    txtArr.forEach((item, index) => {
+      if (index === 0) {
+        let curVNodes = [...$node.$el.find('.input-wrap').nodeList[0].childNodes].map(el => VNode.create(el))
+        curVNodes.push(VNode.create({
+          type: 'text',
+          content: item,
+          attr: {}
+        }))
+        let vnodeConfig = {vnodes_l: MergeList(curVNodes), vnodes_m: [], vnodes_r: []}
+        $node.update(vnodeConfig)
+      } else {
+        let newNode = new Node({
+          type: 'paragraph',
+          child: [
+            { type: 'text', content: item, attr: {} }
+          ]
+        }, $node.$editor)
+        newNode.insertAfter(prevNode)
+        prevNode = newNode
+      }
+    })
+  }
 }
 

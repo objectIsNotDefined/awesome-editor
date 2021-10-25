@@ -11,11 +11,14 @@ class AwesomeEditor {
 
   $nodes = [] // 节点列表
 
+  $uploadImage = null  // 上传图片方法 function
+
   #initialContent = []
 
-  constructor ({el, uploadImg, onChange, content = []}) {
+  constructor ({el, uploadImage, onChange, content = []}) {
     this.$el = $(el)
     this.#initialContent = content
+    this.$uploadImage = uploadImage || null
     this.#init()
   }
 
@@ -42,8 +45,8 @@ class AwesomeEditor {
   }
 
   // 创建编辑器
-  static create ({ el, uploadImg, onChange, content = [] }) {
-    const Editor = new AwesomeEditor({ el, uploadImg, onChange, content })
+  static create ({ el, uploadImage, onChange, content = [] }) {
+    const Editor = new AwesomeEditor({ el, uploadImage, onChange, content })
     Editor.update()
   }
 

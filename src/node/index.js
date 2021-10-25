@@ -53,10 +53,10 @@ class Node {
       this.#initTextNodeDom(options)
     }
     if (['image'].includes(this.$type)) {
-      this.#initImageNodeDom()
+      this.#initImageNodeDom(options)
     }
     if (['table'].includes(this.$type)) {
-
+      this.#initTableNodeDom(options)
     }
   }
 
@@ -94,7 +94,7 @@ class Node {
     }
   }
 
-  // 初始化文字节点
+  // 初始化图片节点
   #initImageNodeDom (options) {
     this.$el = $(`<div class="node-item node-type-image" data-key="${this.$key}">
       <div class="bullet-wrapper"></div>
@@ -102,6 +102,25 @@ class Node {
         <div class="image-box">
           <img src="${this.$attr.url}" alt="">
         </div>
+      </div>
+    </div>`)
+  }
+
+  // 初始化表格节点
+  #initTableNodeDom (options) {
+    console.log(options.attr.data)
+    const tableRows = options.attr.data.map((item) => {
+      const columnItems = item.map((val) => `<td><input type="text" value=${val}></td>`)
+      return `<tr>${columnItems.join('')}</tr>`
+    })
+    this.$el = $(`<div class="node-item node-type-table" data-key="${this.$key}">
+      <div class="bullet-wrapper"></div>
+      <div class="table-wrapper">
+        <table>
+          <tbody>
+            ${tableRows.join('')}
+          </tbody>
+        </table>
       </div>
     </div>`)
   }
@@ -162,17 +181,17 @@ class Node {
       }
     })
     // 复制/粘贴事件
-    this.$el.on('copy', (e) => {
+    this.$el.find('.input-wrap').on('copy', (e) => {
       CopyEvent(e, this)
     })
-    this.$el.on('paste', (e) => {
+    this.$el.find('.input-wrap').on('paste', '', (e) => {
       PasteEvent(e, this)
     })
   }
 
   // image 节点
   #bindImageEvent () {
-
+    
   }
 
   // table 节点
