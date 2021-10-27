@@ -1,3 +1,5 @@
+import VNode from '@/node/vnode'
+
 // VNodeList格式化，合并相邻相似节点
 export function MergeList (list) {
   let newList = []
@@ -8,7 +10,7 @@ export function MergeList (list) {
     if (lastNode && node.isSimilarTo(lastNode)) {
       lastNode.updateContent(`${lastNode.$content}${node.$content}`)
     } else {
-      newList.push(node)
+      newList.push(node.clone())
     }
   }
   return newList
@@ -20,4 +22,9 @@ export function VnodeListContentText (list) {
     txt += vnode.$content
     return txt
   }, '')
+}
+
+// 获取vnodes属性切换状态
+export function NextAttributeStatus (vnodes, key) {
+  return vnodes.filter(vnode => vnode.$type === 'text').every(vnode => vnode.$attr[key]) ? 0 : 1
 }

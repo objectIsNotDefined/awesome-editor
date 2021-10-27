@@ -13,6 +13,12 @@ import {
   selectionFormat
 } from '@/helper/selection-helper'
 
+import {
+  runCmd
+} from '@/helper/node-helper'
+
+import HyperlinkToolbar from '@/toolbar/hyperlink-toolbar'
+
 // 删除 keydown
 export function DeleteDownEvent (e, $node) {
   let inputInnerHTML = e.target.innerHTML
@@ -68,16 +74,7 @@ export function BoldEvent (e, $node) {
   e.preventDefault()
   if ($node.$type !== 'paragraph') return
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
-  // 如果没有选中区，则直接对整行进行操作
-  if (vnodes_m.length === 0) {
-    let nextStatus = vnodes_l.every(vnode => vnode.$attr.bold) && vnodes_r.every(vnode => vnode.$attr.bold)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.updateAttr('bold', nextStatus))
-    vnodes_r.forEach(vnode => vnode.updateAttr('bold', nextStatus))
-  } else {
-    let nextStatus = vnodes_m.every(vnode => vnode.$attr.bold)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.updateAttr('bold', nextStatus))
-  }
-  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  runCmd({ vnodes_l, vnodes_m, vnodes_r }, $node, 'bold')
 }
 
 // ctrl/cmd + i 斜体
@@ -85,16 +82,7 @@ export function ItalicEvent (e, $node) {
   e.preventDefault()
   if ($node.$type !== 'paragraph') return
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
-  // 如果没有选中区，则直接对整行进行操作
-  if (vnodes_m.length === 0) {
-    let nextStatus = vnodes_l.every(vnode => vnode.$attr.italic) && vnodes_r.every(vnode => vnode.$attr.italic)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.updateAttr('italic', nextStatus))
-    vnodes_r.forEach(vnode => vnode.updateAttr('italic', nextStatus))
-  } else {
-    let nextStatus = vnodes_m.every(vnode => vnode.$attr.italic)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.updateAttr('italic', nextStatus))
-  }
-  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  runCmd({ vnodes_l, vnodes_m, vnodes_r }, $node, 'italic')
 }
 
 // ctrl/cmd + u 下划线
@@ -102,16 +90,7 @@ export function UnderlineEvent (e, $node) {
   e.preventDefault()
   if ($node.$type !== 'paragraph') return
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
-  // 如果没有选中区，则直接对整行进行操作
-  if (vnodes_m.length === 0) {
-    let nextStatus = vnodes_l.every(vnode => vnode.$attr.underline) && vnodes_r.every(vnode => vnode.$attr.underline)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.updateAttr('underline', nextStatus))
-    vnodes_r.forEach(vnode => vnode.updateAttr('underline', nextStatus))
-  } else {
-    let nextStatus = vnodes_m.every(vnode => vnode.$attr.underline)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.updateAttr('underline', nextStatus))
-  }
-  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  runCmd({ vnodes_l, vnodes_m, vnodes_r }, $node, 'underline')
 }
 
 // ctrl/cmd + h 中划线
@@ -119,16 +98,7 @@ export function LineThroughEvent (e, $node) {
   e.preventDefault()
   if ($node.$type !== 'paragraph') return
   let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
-  // 如果没有选中区，则直接对整行进行操作
-  if (vnodes_m.length === 0) {
-    let nextStatus = vnodes_l.every(vnode => vnode.$attr.lineThrough) && vnodes_r.every(vnode => vnode.$attr.lineThrough)? 0 : 1
-    vnodes_l.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
-    vnodes_r.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
-  } else {
-    let nextStatus = vnodes_m.every(vnode => vnode.$attr.lineThrough)? 0 : 1
-    vnodes_m.forEach(vnode => vnode.updateAttr('lineThrough', nextStatus))
-  }
-  $node.update({ vnodes_l, vnodes_m, vnodes_r })
+  runCmd({ vnodes_l, vnodes_m, vnodes_r }, $node, 'lineThrough')
 }
 
 // 复制
@@ -196,3 +166,10 @@ export function PasteEvent (e, $node) {
   }
 }
 
+// 超链接
+export function HyperlinkEvent (e, $node) {
+  e.preventDefault()
+  if ($node.$type !== 'paragraph') return
+  let { vnodes_l, vnodes_m, vnodes_r } = selectionFormat(e.target)
+  HyperlinkToolbar.show({ vnodes_l, vnodes_m, vnodes_r }, $node)
+}

@@ -62,6 +62,7 @@ class Toolbar {
       if (!newNodeConfig) return
       const newNode = new Node(newNodeConfig, this.#CurrentNode.$editor)
       newNode.insertAfter(this.#CurrentNode)
+      this.#destroy()
     })
   }
 
@@ -108,7 +109,7 @@ class Toolbar {
     clearTimeout(this.#ShowTimmer)
     this.#ShowTimmer = setTimeout(() => {
       this.#create($node)
-    }, 800)
+    }, 500)
   }
 
   hide ($node) {
@@ -118,7 +119,7 @@ class Toolbar {
     clearTimeout(this.#HideTimmer)
     this.#HideTimmer = setTimeout(() => {
       this.#destroy($node)
-    }, 500)
+    }, 300)
   }
 
 }

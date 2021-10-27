@@ -2,12 +2,23 @@ import VNode from '@/node/vnode'
 import $ from '@/util/dom-core'
 import {
   MergeList,
-  VnodeListContentText
+  VnodeListContentText,
+  NextAttributeStatus
 } from '@/helper/vnode-helper'
 
-// 获取节点html
-export function getNodeHtml ({}) {
-
+// 执行节点切换命令
+export function runCmd({vnodes_l, vnodes_m, vnodes_r}, $node, cmd) {
+  if (['bold', 'italic', 'underline', 'lineThrough'].includes(cmd)) {
+    if (vnodes_m.length) {
+      let nextStatus = NextAttributeStatus(vnodes_m, cmd)
+      vnodes_m.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
+    } else {
+      let nextStatus = NextAttributeStatus(vnodes_l, cmd) && NextAttributeStatus(vnodes_r, cmd) ? 1 : 0
+      vnodes_l.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
+      vnodes_r.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
+    }
+    updateNodeContent({vnodes_l, vnodes_m, vnodes_r}, $node)
+  }
 }
 
 // 根据节点内容更新
@@ -23,7 +34,10 @@ export function updateNodeContent ({vnodes_l, vnodes_m, vnodes_r}, $node) {
       endContainer = null,
       endOffset = 0
   if ($node.$type === 'paragraph') {
-    const VnodeList = MergeList([...vnodes_l, ...vnodes_m, ...vnodes_r])
+    let VnodeList = MergeList([...vnodes_l, ...vnodes_m, ...vnodes_r])
+    if (VnodeList.length === 0) {
+      VnodeList = [new VNode({ type: 'text', content: '', attr: {} })]
+    }
     $input.empty()
     VnodeList.reduce((len, vnode) => {
       $input.append($(vnode.compile()))

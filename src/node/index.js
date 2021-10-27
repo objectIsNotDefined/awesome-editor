@@ -2,6 +2,7 @@ import $ from '@/util/dom-core'
 import { getRandomStr } from '@/util/util'
 import VNode from './vnode'
 import NodeToolbar from '@/toolbar/node-toolbar'
+import TextToolbar from '@/toolbar/text-toolbar'
 
 import {
   DeleteDownEvent,
@@ -12,7 +13,8 @@ import {
   UnderlineEvent,
   LineThroughEvent,
   CopyEvent,
-  PasteEvent
+  PasteEvent,
+  HyperlinkEvent
 } from '@/helper/event-helper'
 
 import {
@@ -108,7 +110,6 @@ class Node {
 
   // 初始化表格节点
   #initTableNodeDom (options) {
-    console.log(options.attr.data)
     const tableRows = options.attr.data.map((item) => {
       const columnItems = item.map((val) => `<td><input type="text" value=${val}></td>`)
       return `<tr>${columnItems.join('')}</tr>`
@@ -173,6 +174,10 @@ class Node {
       if (e.keyCode === 72 && (e.ctrlKey || e.metaKey)) {
         LineThroughEvent(e, this)
       }
+      // 添加超链接
+      if (e.keyCode === 75 && (e.ctrlKey || e.metaKey)) {
+        HyperlinkEvent(e, this)
+      }
     })
     // 删除事件，keyup触发，保持容器结构
     this.$el.on('keyup', '.input-wrap', (e) => {
@@ -180,13 +185,25 @@ class Node {
         DeleteUpEvent(e, this)
       }
     })
-    // 复制/粘贴事件
+    // 复制
     this.$el.find('.input-wrap').on('copy', (e) => {
       CopyEvent(e, this)
     })
+    // 粘贴
     this.$el.find('.input-wrap').on('paste', '', (e) => {
       PasteEvent(e, this)
     })
+
+    // mouseup 触发是否需要显示文字处理弹窗
+    this.$el.find('.input-wrap').on('mouseup', (e) => {
+      TextToolbar.show(e, this)
+    })
+
+    // 点击文本事件
+    this.$el.on('click', '.text-link', (e) => {
+      window.open($(e.target).attr('url'))
+    })
+
   }
 
   // image 节点

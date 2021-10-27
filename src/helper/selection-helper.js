@@ -60,3 +60,10 @@ export function selectionFormat (target) {
     vnodes_r: MergeList(vnodes_r)
   }
 }
+
+// 获取selection开始和结束节点的位置
+export function getSelectionPosition () {
+  const selection = window.getSelection? window.getSelection() : document.getSelection()
+  const range = selection.getRangeAt(0)
+  return range.getBoundingClientRect()
+}

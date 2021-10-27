@@ -29,6 +29,15 @@ class VNode {
     })
   }
 
+  // 拷贝一份数据
+  clone () {
+    return new VNode({
+      type: this.$type,
+      content: this.$content,
+      attr: { ...this.$attr }
+    })
+  }
+
   // 更新内容
   updateContent (val) {
     this.$content = val
@@ -36,7 +45,9 @@ class VNode {
 
   // 更新节点属性
   updateAttr (cmd, val) {
-    this.$attr[cmd] = val
+    if (this.$type === 'text') {
+      this.$attr[cmd] = val
+    }
   }
 
   // 将节点编译为dom

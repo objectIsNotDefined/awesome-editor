@@ -33,7 +33,6 @@ class AwesomeEditor {
 
   // 手动更新编辑器内容
   update (content = []) {
-    console.log('更新编辑器内容', content)
     // 先清空编辑器
     this.$el.empty()
     // 遍历节点
