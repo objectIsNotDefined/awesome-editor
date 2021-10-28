@@ -22,7 +22,7 @@ class Toolbar {
     { icon: Icon.H2, title: '中标题', fn: 'insertH2' },
     { icon: Icon.H3, title: '小标题', fn: 'insertH3' },
     { type: 'split-line' },
-    { icon: Icon.Link, title: '链接', fn: 'insertLink'},
+    // { icon: Icon.Link, title: '链接', fn: 'insertLink'},
     { icon: Icon.Img, title: '图片', fn: 'insertImage'},
     { icon: Icon.Table, title: '表格', fn: 'insertTable'}
   ]
@@ -43,8 +43,8 @@ class Toolbar {
     let { left, top, right, bottom } = $node.$el.find('.bullet-wrapper').nodeList[0].getBoundingClientRect()
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
-    if (top + 30 + 341 > windowHeight) {
-      top = top - 30 - 341
+    if (top + 30 + 301 > windowHeight) {
+      top = top - 30 - 301
     }
     const wrapper = document.createElement('div')
     const handleItems = this.#Fns.reduce((str, item) => {

@@ -113,8 +113,12 @@ class Node {
 
   // 初始化表格节点
   #initTableNodeDom (options) {
-    const tableRows = options.attr.data.map((item) => {
-      const columnItems = item.map((val) => `<td><input type="text" value=${val}></td>`)
+    const tableRows = options.attr.data.map((item, index) => {
+      const columnItems = item.map((val, _index) => `<td class="${_index === 0 ? 'row-head' : ''}">
+        ${_index === 0 ? '<div class="row-head"></div>' : ''}
+        ${index === 0 ? '<div class="column-head"></div>' : ''}
+        <input type="text" value=${val}>
+      </td>`)
       return `<tr>${columnItems.join('')}</tr>`
     })
     this.$el = $(`<div class="node-item node-type-table" data-key="${this.$key}">
@@ -256,11 +260,17 @@ class Node {
   remove() {
     let editorNodes = this.$editor.$nodes
     // 如果当前节点是编辑器唯一的节点，则不能删除
-    if (editorNodes.length === 1) return
+    if (editorNodes.length === 1 && this.$type === 'paragraph') return
     this.$el.remove()
     let currentNodeIndex = editorNodes.indexOf(this)
     editorNodes.splice(currentNodeIndex, 1)
-    if (currentNodeIndex === 0) {
+    if (editorNodes.length === 0) {
+      const newNode = new Node({
+        type: 'paragraph',
+        child: []
+      }, this.$editor)
+      newNode.insertAfter()
+    } else if (currentNodeIndex === 0) {
       editorNodes[0].focus()
     } else {
       editorNodes[currentNodeIndex - 1].focus()

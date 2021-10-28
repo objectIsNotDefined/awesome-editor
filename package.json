@@ -2,7 +2,7 @@
   "name": "awesome-editor",
   "version": "0.0.1",
   "description": "cross platform editor",
-  "main": "index.js",
+  "main": "dist/awesome-editor.js",
   "scripts": {
     "dev": "webpack --config ./build/webpack.dev.js"
   },

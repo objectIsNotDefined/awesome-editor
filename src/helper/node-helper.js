@@ -92,4 +92,5 @@ export function updateNodeContent ({vnodes_l, vnodes_m, vnodes_r}, $node) {
   const selection = window.getSelection ? window.getSelection() : document.getSelection()
   selection.removeAllRanges()
   selection.addRange(range)
+  $node.$editor.triggerChange()
 }

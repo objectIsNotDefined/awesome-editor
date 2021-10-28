@@ -6,11 +6,12 @@
   .node-item {
     position: relative;
     transition: background-color .1s linear 30ms;
+    padding: 8px 0 8px 28px;
     .input-wrap {
       line-height: 26px;
       outline: none;
-      padding: 2px 0 2px 28px;
       font-size: 14px;
+      line-height: 24px;
       color: #555659;
       & > span {
         word-break: break-all;
@@ -40,7 +41,8 @@
         }
         &.text-link {
           cursor: pointer;
-          color: #2c65ff;
+          color: #2f509b;
+          text-decoration: underline;
           &:hover {
             opacity: .6;
           }
@@ -56,8 +58,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      left: 3px;
-      top: 7px;
+      left: 0px;
+      top: 12px;
       transition: opacity .3s ease;
       opacity: .5;
       &:hover {
@@ -70,30 +72,39 @@
       }
     }
     &.head1 {
+      padding: 12px 0 12px 28px;
       .input-wrap {
-        font-size: 26px;
-        line-height: 39px;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 32px;
+        color: #17181a;
       }
       .bullet-wrapper {
-        top: 12px;
+        top: 20px;
       }
     }
     &.head2 {
+      padding: 12px 0 12px 28px;
       .input-wrap {
-        font-size: 22px;
-        line-height: 32px;
+        font-size: 20px;
+        line-height: 28px;
+        color: #17181a;
+        font-weight: 500;
       }
       .bullet-wrapper {
-        top: 9px;
+        top: 18px;
       }
     }
     &.head3 {
+      padding: 12px 0 12px 28px;
       .input-wrap {
-        font-size: 20px;
-        line-height: 30px;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        color: #17181a;
       }
       .bullet-wrapper {
-        top: 8px;
+        top: 16px;
       }
     }
     &.hovered {
@@ -101,9 +112,8 @@
       border-radius: 4px;
     }
     &.node-type-table {
-      padding: 10px 0;
+      padding: 10px 0 10px 28px;
       .table-wrapper {
-        margin-left: 28px;
         border: 1px solid #dedede;
         overflow-x: auto;
         table {
@@ -120,6 +130,7 @@
             }
             td {
               min-width: 150px;
+              position: relative;
               &:not(:last-child) {
                 border-right: 1px solid #dedede;
               }
@@ -133,6 +144,22 @@
                 text-align: center;
                 background-color: transparent;
               }
+              & > .column-head {
+                position: absolute;
+                height: 4px;
+                background-color: @gray6;
+                left: 0;
+                right: 0;
+                top: -4px;
+              }
+              & > .row-head {
+                position: absolute;
+                width: 4px;
+                background-color: @gray6;
+                top: 0;
+                bottom: 0;
+                left: -4px;
+              }
             }
             &:first-child {
               background-color: #f7f8fb;
@@ -145,9 +172,8 @@
       }
     }
     &.node-type-image {
+      padding: 10px 0 10px 28px;
       .image-wrapper {
-        margin-left: 28px;
-        padding: 10px 0;
         .image-box {
           overflow: hidden;
           display: inline-block;
