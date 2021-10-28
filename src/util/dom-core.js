@@ -122,6 +122,14 @@ class DomElement {
     })
   }
 
+  class(className) {
+    this.nodeList.forEach(node => {
+      if (node.className) {
+        node.className = className
+      }
+    })
+  }
+
   attr (key, val) {
     if (val) {
       this.nodeList.forEach(node => {

@@ -79,6 +79,13 @@ class Toolbar {
         }
       }
     })
+    this.$el.find('.text-input').on('keydown', (e) => {
+      if (e.keyCode === 13) {
+        e.stopPropagation()
+        e.preventDefault()
+        this.$el.find('.link-input').nodeList[0].focus()
+      }
+    })
   }
 
   show ({ vnodes_l, vnodes_m, vnodes_r }, $node) {

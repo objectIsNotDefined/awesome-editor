@@ -3,6 +3,8 @@ import '@/styles/index.less'
 import $ from '@/util/dom-core'
 import Node from '@/node'
 
+import Icons from '@/assets/icon'
+
 class AwesomeEditor {
 
   $el = null  // 编辑器dom

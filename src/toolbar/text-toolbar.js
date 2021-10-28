@@ -1,4 +1,5 @@
 import $ from '@/util/dom-core'
+import Icon from '@/assets/icon'
 
 import {
   selectionFormat,
@@ -20,10 +21,15 @@ class Toolbar {
   #VNodeCache = null
 
   $Fns = [
-    { title: '加粗', fn: 'bold' },
-    { title: '斜体', fn: 'italic' },
-    { title: '下划线', fn: 'underline' },
-    { title: '中划线', fn: 'lineThrough' }
+    { icon: Icon.H1, title: '大标题', fn: 'head1' },
+    { icon: Icon.H2, title: '中标题', fn: 'head2' },
+    { icon: Icon.H3, title: '小标题', fn: 'head3' },
+    { icon: Icon.P,  title: '段落', fn: 'paragraph' },
+    { icon: Icon.B, title: '加粗', fn: 'bold' },
+    { icon: Icon.I, title: '斜体', fn: 'italic' },
+    { icon: Icon.U, title: '下划线', fn: 'underline' },
+    { icon: Icon.S, title: '中划线', fn: 'lineThrough' },
+    { icon: Icon.Link, title: '超链接', fn: 'hyperlink'}
   ]
 
   constructor () {
@@ -38,7 +44,9 @@ class Toolbar {
     const rangeInfo = getSelectionPosition()
     let pos_x = (rangeInfo.left + rangeInfo.right) / 2
     let pos_y = rangeInfo.bottom + 10
-    const handleIcons = this.$Fns.map(item => `<div class="handle-item" handle-key="${item.fn}">${item.title}</div>`)
+    const handleIcons = this.$Fns.map(item => {
+      return `<div class="handle-item" title="${item.title}" handle-key="${item.fn}">${item.icon}</div>`
+    })
     this.$el = $(`<div class="text-toolbar-wrap" style="left: ${pos_x}px; top: ${pos_y}px;">
       ${handleIcons.join('')}
     </div>`)

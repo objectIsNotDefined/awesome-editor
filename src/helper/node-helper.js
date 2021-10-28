@@ -5,10 +5,11 @@ import {
   VnodeListContentText,
   NextAttributeStatus
 } from '@/helper/vnode-helper'
+import HyperlinkToolbar from '@/toolbar/hyperlink-toolbar'
 
 // 执行节点切换命令
 export function runCmd({vnodes_l, vnodes_m, vnodes_r}, $node, cmd) {
-  if (['bold', 'italic', 'underline', 'lineThrough'].includes(cmd)) {
+  if (['bold', 'italic', 'underline', 'lineThrough'].includes(cmd) && $node.$type === 'paragraph') {
     if (vnodes_m.length) {
       let nextStatus = NextAttributeStatus(vnodes_m, cmd)
       vnodes_m.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
@@ -18,6 +19,30 @@ export function runCmd({vnodes_l, vnodes_m, vnodes_r}, $node, cmd) {
       vnodes_r.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
     }
     updateNodeContent({vnodes_l, vnodes_m, vnodes_r}, $node)
+  }
+  if (['hyperlink'].includes(cmd) && $node.$type === 'paragraph') {
+    HyperlinkToolbar.show({vnodes_l, vnodes_m, vnodes_r}, $node)
+  }
+  if (['head1', 'head2', 'head3', 'paragraph'].includes(cmd)) {
+    if (cmd === $node.$type) return
+    let newNodeInfo = {
+      vnodes: [new VNode({
+        type: 'text',
+        content: [...vnodes_l, ...vnodes_m, ...vnodes_r].reduce((txt, item) => {
+          return txt += item.$content
+        }, ''),
+        attr: {}
+      })]
+    }
+    if (['head1', 'head2', 'head3'].includes(cmd)) {
+      newNodeInfo.type = 'head'
+      const levelMap = { head1: 1, head2: 2, head3: 3 }
+      newNodeInfo.attr = { level: levelMap[cmd] }
+    }
+    if (cmd === 'paragraph') {
+      newNodeInfo.type = 'paragraph'
+    }
+    $node.updateNode(newNodeInfo)
   }
 }
 

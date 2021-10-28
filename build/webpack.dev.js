@@ -30,6 +30,11 @@ module.exports = {
         test: /\.less$/,
         use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'],
       },
+      {
+        test: /\.svg$/,
+        loader: 'svg-sprite-loader',
+        options: {}
+      }
     ]
   },
   watch: true,

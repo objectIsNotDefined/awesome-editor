@@ -4,6 +4,8 @@ import VNode from './vnode'
 import NodeToolbar from '@/toolbar/node-toolbar'
 import TextToolbar from '@/toolbar/text-toolbar'
 
+import Icon from '@/assets/icon'
+
 import {
   DeleteDownEvent,
   DeleteUpEvent,
@@ -66,10 +68,10 @@ class Node {
   #initTextNodeDom (options) {
     let classNames = ''
     if (this.$type === 'head') {
-      classNames = `heading${options?.attr?.level || 1}`
+      classNames = `head${options?.attr?.level || 1}`
     }
     this.$el = $(`<div class="node-item ${classNames}" data-key="${this.$key}">
-      <div class="bullet-wrapper"></div>
+      <div class="bullet-wrapper">${Icon.Add}</div>
       <div class="input-wrap" contenteditable="true"></div>
     </div>`)
     // 初始化内容
@@ -99,9 +101,10 @@ class Node {
   // 初始化图片节点
   #initImageNodeDom (options) {
     this.$el = $(`<div class="node-item node-type-image" data-key="${this.$key}">
-      <div class="bullet-wrapper"></div>
+      <div class="bullet-wrapper">${Icon.Add}</div>
       <div class="image-wrapper">
         <div class="image-box">
+          <div class="delete">${Icon.Delete}</div>
           <img src="${this.$attr.url}" alt="">
         </div>
       </div>
@@ -115,7 +118,7 @@ class Node {
       return `<tr>${columnItems.join('')}</tr>`
     })
     this.$el = $(`<div class="node-item node-type-table" data-key="${this.$key}">
-      <div class="bullet-wrapper"></div>
+      <div class="bullet-wrapper">${Icon.Add}</div>
       <div class="table-wrapper">
         <table>
           <tbody>
@@ -208,7 +211,9 @@ class Node {
 
   // image 节点
   #bindImageEvent () {
-    
+    this.$el.find('.delete').on('click', (e) => {
+      this.remove()
+    })
   }
 
   // table 节点
@@ -227,6 +232,19 @@ class Node {
   // 刷新节点内容
   update (nodeInfo) {
     updateNodeContent(nodeInfo, this)
+  }
+
+  // 更新节点，包括节点类型等
+  updateNode (nodeInfo) {
+    if (nodeInfo.type === this.$type && nodeInfo.attr.level === this.$attr.level) return
+    this.$type = nodeInfo.type
+    this.$attr = { ...nodeInfo.attr }
+    let nodeClassNames = `node-item`
+    if (nodeInfo.type === 'head') {
+      nodeClassNames += ` head${nodeInfo.attr.level}`
+    }
+    this.$el.class(nodeClassNames)
+    updateNodeContent({ vnodes_l: nodeInfo.vnodes, vnodes_m: [], vnodes_r: [] }, this)
   }
 
   // 节点聚焦

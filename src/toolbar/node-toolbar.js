@@ -1,5 +1,7 @@
 import $ from '@/util/dom-core'
 import Node from '@/node'
+import Icon from '@/assets/icon'
+import HyperlinkToolbar from '@/toolbar/hyperlink-toolbar'
 
 // 行节点-工具栏
 class Toolbar {
@@ -15,10 +17,14 @@ class Toolbar {
   #ShowTimmer = null
 
   #Fns = [
-    { title: '插入标题', fn: 'insertHead' },
-    { title: '插入段落', fn: 'insertParagraph' },
-    { title: '插入图片', fn: 'insertImage' },
-    { title: '插入表格', fn: 'insertTable' }
+    { icon: Icon.P, title: '段落', fn: 'insertParagraph' },
+    { icon: Icon.H1, title: '大标题', fn: 'insertH1' },
+    { icon: Icon.H2, title: '中标题', fn: 'insertH2' },
+    { icon: Icon.H3, title: '小标题', fn: 'insertH3' },
+    { type: 'split-line' },
+    { icon: Icon.Link, title: '链接', fn: 'insertLink'},
+    { icon: Icon.Img, title: '图片', fn: 'insertImage'},
+    { icon: Icon.Table, title: '表格', fn: 'insertTable'}
   ]
 
   constructor () {
@@ -32,15 +38,28 @@ class Toolbar {
   #create ($node) {
     this.#CurrentNode = $node
     this.#CurrentNode.triggerHover(true)
+    // console.log(IconP)
     // 获取工具栏所属位置
-    const { left, top, right, bottom } = $node.$el.find('.bullet-wrapper').nodeList[0].getBoundingClientRect()
+    let { left, top, right, bottom } = $node.$el.find('.bullet-wrapper').nodeList[0].getBoundingClientRect()
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
+    if (top + 30 + 341 > windowHeight) {
+      top = top - 30 - 341
+    }
     const wrapper = document.createElement('div')
     const handleItems = this.#Fns.reduce((str, item) => {
-      return str += `<div class="insert-node" handle-key="${item.fn}">${item.title}</div>`
+      if (item.type === 'split-line') {
+        str += '<p class="split-line"></p>'
+      } else if (item.fn !== 'insertLink' || this.#CurrentNode.$type === 'paragraph') {
+        str += `<div class="insert-node" handle-key="${item.fn}">
+          ${item.icon}
+          ${item.title}
+        </div>`
+      }
+      return str
     }, '')
     this.$el = $(`<div class="node-toolbar-wrap" style="left: ${left}px; top: ${top + 30}px;">
+        <p class="toolbar-title">插入内容</p>
         ${handleItems}
       </div>`)
     $node.$editor.$el.append(this.$el)
@@ -58,10 +77,14 @@ class Toolbar {
     })
     this.$el.on('click', '.insert-node', async (e) => {
       const handleKey = $(e.target).attr('handle-key')
-      const newNodeConfig =  await this.#getNodeOptionsByHandleKey(handleKey)
-      if (!newNodeConfig) return
-      const newNode = new Node(newNodeConfig, this.#CurrentNode.$editor)
-      newNode.insertAfter(this.#CurrentNode)
+      if (handleKey === 'insertLink') {
+        HyperlinkToolbar.show({vnodes_l: [], vnodes_m: [], vnodes_r: []} ,this.#CurrentNode)
+      } else {
+        const newNodeConfig =  await this.#getNodeOptionsByHandleKey(handleKey)
+        if (!newNodeConfig) return
+        const newNode = new Node(newNodeConfig, this.#CurrentNode.$editor)
+        newNode.insertAfter(this.#CurrentNode)
+      }
       this.#destroy()
     })
   }
@@ -69,8 +92,14 @@ class Toolbar {
   async #getNodeOptionsByHandleKey (key) {
     const $editor = this.#CurrentNode.$editor
     const HandeMap = {
-      insertHead: async () => {
-        return { type: 'head', content: '', attr: {} }
+      insertH1: async () => {
+        return { type: 'head', content: '', attr: { level: 1 } }
+      },
+      insertH2: async () => {
+        return { type: 'head', content: '', attr: { level: 2 } }
+      },
+      insertH3: async () => {
+        return { type: 'head', content: '', attr: { level: 3 } }
       },
       insertParagraph: async () => {
         return { type: 'paragraph', child: [] }

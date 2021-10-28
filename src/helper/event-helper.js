@@ -26,7 +26,6 @@ export function DeleteDownEvent (e, $node) {
   if (e.target.innerHTML === '<span><br></span>') {
     e.preventDefault()
     $node.remove()
-    console.log('remove')
     return
   }
   // 光标在行首, 自动合并至上一行

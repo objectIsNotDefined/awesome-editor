@@ -1,0 +1,16 @@
+<svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <filter x="-6.9%" y="-6.9%" width="113.9%" height="113.9%" filterUnits="objectBoundingBox" id="a">
+            <feGaussianBlur stdDeviation="2.5" in="SourceAlpha" result="shadowBlurInner1"/>
+            <feOffset in="shadowBlurInner1" result="shadowOffsetInner1"/>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"/>
+            <feColorMatrix values="0 0 0 0 0.968627451 0 0 0 0 0.97254902 0 0 0 0 0.984313725 0 0 0 1 0" in="shadowInnerInner1"/>
+        </filter>
+        <rect id="b" x="0" y="0" width="36" height="36" rx="5.143"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <use fill="#000" filter="url(#a)" xlink:href="#b"/>
+        <rect stroke="#EFF1F4" stroke-linejoin="square" x=".5" y=".5" width="35" height="35" rx="5.143"/>
+        <path d="M24.305 16.714c.773 0 1.385.177 1.858.54.45.365.687.864.687 1.498 0 .811-.43 1.362-1.267 1.632.45.135.794.343 1.03.614.258.28.387.644.387 1.08 0 .687-.247 1.249-.73 1.685-.515.437-1.192.666-2.007.666-.784 0-1.417-.198-1.89-.583-.537-.436-.837-1.07-.902-1.902h1.181c.022.499.183.883.505 1.154.279.25.644.374 1.095.374.494 0 .89-.145 1.191-.416.258-.25.398-.55.398-.925 0-.437-.14-.759-.42-.967-.257-.208-.643-.312-1.148-.312h-.558V20h.548c.472 0 .826-.104 1.062-.302.236-.197.365-.489.365-.863s-.118-.655-.332-.852c-.237-.208-.59-.302-1.042-.302-.461 0-.826.115-1.084.343-.258.229-.419.572-.462 1.03h-1.148c.064-.739.343-1.31.848-1.726.472-.416 1.084-.614 1.835-.614zM10.8 11.571V17.1l5.914.001v-5.529h1.8V24.43h-1.8V18.9H10.8v5.529H9V11.57h1.8z" fill="#17181A" fill-rule="nonzero"/>
+    </g>
+</svg>
