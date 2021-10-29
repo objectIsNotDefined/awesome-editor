@@ -3,6 +3,7 @@ import { getRandomStr } from '@/util/util'
 import VNode from './vnode'
 import NodeToolbar from '@/toolbar/node-toolbar'
 import TextToolbar from '@/toolbar/text-toolbar'
+import TableToolbar from '@/toolbar/table-toolbar'
 
 import Icon from '@/assets/icon'
 
@@ -114,11 +115,7 @@ class Node {
   // 初始化表格节点
   #initTableNodeDom (options) {
     const tableRows = options.attr.data.map((item, index) => {
-      const columnItems = item.map((val, _index) => `<td class="${_index === 0 ? 'row-head' : ''}">
-        ${_index === 0 ? '<div class="row-head"></div>' : ''}
-        ${index === 0 ? '<div class="column-head"></div>' : ''}
-        <input type="text" value=${val}>
-      </td>`)
+      const columnItems = item.map((val, _index) => `<td><input data-row="${index}" data-col="${_index}" type="text" value="${val}"></td>`)
       return `<tr>${columnItems.join('')}</tr>`
     })
     this.$el = $(`<div class="node-item node-type-table" data-key="${this.$key}">
@@ -222,7 +219,32 @@ class Node {
 
   // table 节点
   #bindTableEvent () {
+    this.$el.find('input').on('focus', (e) => {
+      TableToolbar.show(e, this)
+    })
+    this.$el.find('input').on('blur', (e) => {
+      // TableToolbar.destroy()
+    })
+  }
 
+  // 获取表格节点内容
+  getTableData () {
+    if (this.$type !== 'table') return false
+    return [...this.$el.find('tr').nodeList].map(row => {
+      return [...row.childNodes].map(td => $(td).find('input').nodeList[0].value)
+    })
+  }
+
+  // 通过数据设置表格内容
+  setTableData (data) {
+    const tableRows = data.map((item, index) => {
+      const columnItems = item.map((val, _index) => `<td><input data-row="${index}" data-col="${_index}" type="text" value="${val}"></td>`)
+      return `<tr>${columnItems.join('')}</tr>`
+    })
+    const newTable = $(`<table><tbody>${tableRows.join('')}</tbody></table>`)
+    this.$el.find('.table-wrapper').empty().append(newTable)
+    this.#bindTableEvent()
+    this.$editor.triggerChange()
   }
 
   triggerHover (status) {
@@ -233,12 +255,12 @@ class Node {
     }
   }
 
-  // 刷新节点内容
+  // 刷新文字节点内容
   update (nodeInfo) {
     updateNodeContent(nodeInfo, this)
   }
 
-  // 更新节点，包括节点类型等
+  // 更新文字节点，包括节点类型等
   updateNode (nodeInfo) {
     if (nodeInfo.type === this.$type && nodeInfo.attr.level === this.$attr.level) return
     this.$type = nodeInfo.type
@@ -293,6 +315,7 @@ class Node {
       $editorEl.append(this.$el)
     }
     this.focus()
+    this.$editor.triggerChange()
   }
 
 }

@@ -115,7 +115,7 @@ class Toolbar {
           type: 'table',
           attr: {
             data: [
-              ['表头1', '表头2', '表头3', '表头3'],
+              ['', '', '', ''],
               ['', '', '', ''],
               ['', '', '', '']
             ]
@@ -129,7 +129,7 @@ class Toolbar {
   #destroy ($node) {
     if (this.#CurrentNode) {
       this.#CurrentNode.triggerHover(false)
-      this.#CurrentNode = null
+      // this.#CurrentNode = null
     }
     this.$el.remove()
   }

@@ -52,6 +52,9 @@ class AwesomeEditor {
 
   // 手动更新编辑器内容
   update (content = []) {
+    if (content.length === 0) {
+      content = [{ type: 'paragraph', child: [] }]
+    }
     // 先清空编辑器
     this.$el.empty()
     // 遍历节点

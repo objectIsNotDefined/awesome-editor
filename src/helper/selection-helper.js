@@ -5,8 +5,11 @@ import { MergeList } from '@/helper/vnode-helper'
 // 根据dom格式化节点 vnodes
 export function selectionFormat (target) {
   const childNode = [...target.childNodes]
-  const selection = window.getSelection? window.getSelection() : document.getSelection()
-  const range = selection.getRangeAt(0)
+  let range = {}
+  try {
+    const selection = window.getSelection? window.getSelection() : document.getSelection()
+    range = selection.getRangeAt(0)
+  } catch (e) {}
   let startNodeIndex, endNodeIndex
   let vnodes_l = [],
       vnodes_r = [],
