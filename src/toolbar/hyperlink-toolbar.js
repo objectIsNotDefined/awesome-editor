@@ -1,6 +1,9 @@
 import $ from '@/util/dom-core'
 import TextToolbar from '@/toolbar/text-toolbar'
 import VNode from '@/node/vnode'
+import {
+  getToolbarPosition
+} from '@/helper/toolbar-helper'
 
 import {
   getSelectionPosition
@@ -30,9 +33,11 @@ class Toolbar {
 
   #create () {
     // 获取浮层需要出现的位置
-    const rangeInfo = getSelectionPosition()
-    let pos_x = (rangeInfo.left + rangeInfo.right) / 2
-    let pos_y = rangeInfo.bottom + 10
+    let rangeInfo = getSelectionPosition()
+    if (rangeInfo.left === 0 && rangeInfo.top === 0) {
+      rangeInfo = this.#CurrentNode.$el.find('.input-wrap span').nodeList[0].getBoundingClientRect()
+    }
+    let { pos_x, pos_y } = getToolbarPosition(rangeInfo, { width: 358, height: 107 })
     this.$el = $(`<div class="hyperlink-toolbar-wrap" style="left: ${pos_x}px; top: ${pos_y}px;">
       <label>文本 <input type="text" class="text-input" placeholder="输入文本"></label>
       <label>链接 <input type="text" class="link-input" placeholder="输入链接"></label>

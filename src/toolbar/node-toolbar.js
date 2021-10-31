@@ -78,7 +78,7 @@ class Toolbar {
     this.$el.on('click', '.insert-node', async (e) => {
       const handleKey = $(e.target).attr('handle-key')
       if (handleKey === 'insertLink') {
-        HyperlinkToolbar.show({vnodes_l: [], vnodes_m: [], vnodes_r: []} ,this.#CurrentNode)
+        HyperlinkToolbar.show({ vnodes_l: [], vnodes_m: [], vnodes_r: [] }, this.#CurrentNode)
       } else {
         const newNodeConfig =  await this.#getNodeOptionsByHandleKey(handleKey)
         if (!newNodeConfig) return

@@ -14,7 +14,7 @@ export function runCmd({vnodes_l, vnodes_m, vnodes_r}, $node, cmd) {
       let nextStatus = NextAttributeStatus(vnodes_m, cmd)
       vnodes_m.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
     } else {
-      let nextStatus = NextAttributeStatus(vnodes_l, cmd) && NextAttributeStatus(vnodes_r, cmd) ? 1 : 0
+      let nextStatus = NextAttributeStatus([...vnodes_l, ...vnodes_r], cmd) ? 1 : 0
       vnodes_l.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
       vnodes_r.forEach(vnode => vnode.updateAttr(cmd, nextStatus))
     }

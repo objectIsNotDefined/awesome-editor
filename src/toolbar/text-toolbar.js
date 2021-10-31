@@ -7,6 +7,10 @@ import {
 } from '@/helper/selection-helper'
 
 import {
+  getToolbarPosition
+} from '@/helper/toolbar-helper'
+
+import {
   runCmd
 } from '@/helper/node-helper'
 
@@ -42,8 +46,7 @@ class Toolbar {
 
   #create () {
     const rangeInfo = getSelectionPosition()
-    let pos_x = (rangeInfo.left + rangeInfo.right) / 2
-    let pos_y = rangeInfo.bottom + 10
+    let { pos_x, pos_y } = getToolbarPosition(rangeInfo, { width: 448, height: 60 })
     const handleIcons = this.$Fns.map(item => {
       return `<div class="handle-item" title="${item.title}" handle-key="${item.fn}">${item.icon}</div>`
     })

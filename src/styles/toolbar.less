@@ -136,7 +136,7 @@
       opacity: .8;
     }
   }
-  &:after {
+  &.up:after {
     content: '';
     display: block;
     width: 0;
@@ -148,6 +148,19 @@
     left: 50%;
     transform: translateX(-50%);
     top: -16px;
+  }
+  &.down:after {
+    content: '';
+    display: block;
+    width: 0;
+    right: 0;
+    border-width: 8px;
+    border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
+    border-style: solid;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -16px;
   }
 }
 

@@ -1,8 +1,7 @@
 import $ from '@/util/dom-core'
 
 import {
-  selectionFormat,
-  getSelectionPosition
+  selectionFormat
 } from '@/helper/selection-helper'
 
 import {
@@ -40,8 +39,13 @@ class Toolbar {
     const rangeInfo = this.#CurrentNode.$el.nodeList[0].getBoundingClientRect()
     let pos_x = (rangeInfo.left + rangeInfo.right) / 2
     let pos_y = rangeInfo.bottom + 8
+    let arrow = 'up'
+    if (rangeInfo.bottom + 8 + 32 > window.innerHeight) {
+      pos_y = rangeInfo.top - 32 - 8
+      arrow = 'down'
+    }
     const handleItems = this.#Fns.map(item => `<span class="handle-item" handle-key="${item.fn}">${item.title}</span>`)
-    this.$el = $(`<div class="table-toolbar-wrap" style="left: ${pos_x}px; top: ${pos_y}px;">${handleItems.join('')}</div>`)
+    this.$el = $(`<div class="table-toolbar-wrap ${arrow}" style="left: ${pos_x}px; top: ${pos_y}px;">${handleItems.join('')}</div>`)
     this.#CurrentNode.$editor.$el.append(this.$el)
   }
 
